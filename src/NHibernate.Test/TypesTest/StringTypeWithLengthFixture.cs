@@ -171,7 +171,7 @@ namespace NHibernate.Test.TypesTest
 			// This test fails against the ODBC driver. The driver would need to be override to allow longer parameter sizes than the column.
 			AssertExpectedFailureOrNoException(
 				exception,
-				(Sfi.ConnectionProvider.Driver is OdbcDriver));
+				(Sfi.ConnectionProvider.Driver.IsOdbcDriver()));
 		}
 
 		[Test]
@@ -199,7 +199,7 @@ namespace NHibernate.Test.TypesTest
 			// This test fails against the ODBC driver. The driver would need to be override to allow longer parameter sizes than the column.
 			AssertExpectedFailureOrNoException(
 				exception,
-				(Sfi.ConnectionProvider.Driver is OdbcDriver));
+				(Sfi.ConnectionProvider.Driver.IsOdbcDriver()));
 		}
 
 
@@ -231,7 +231,7 @@ namespace NHibernate.Test.TypesTest
 			// This test fails against the ODBC driver. The driver would need to be override to allow longer parameter sizes than the column.
 			AssertExpectedFailureOrNoException(
 				exception,
-				(Dialect is FirebirdDialect) || (Sfi.ConnectionProvider.Driver is OdbcDriver));
+				(Dialect is FirebirdDialect) || (Sfi.ConnectionProvider.Driver.IsOdbcDriver()));
 		}
 
 
@@ -263,7 +263,7 @@ namespace NHibernate.Test.TypesTest
 			// This test fails against the ODBC driver. The driver would need to be override to allow longer parameter sizes than the column.
 			AssertExpectedFailureOrNoException(
 				exception,
-				(Dialect is FirebirdDialect) || (Sfi.ConnectionProvider.Driver is OdbcDriver));
+				(Dialect is FirebirdDialect) || (Sfi.ConnectionProvider.Driver.IsOdbcDriver()));
 		}
 
 

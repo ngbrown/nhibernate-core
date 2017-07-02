@@ -1,72 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AED62C8C-4391-479E-AFD5-E41DD860D23E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NHibernate</RootNamespace>
-    <AssemblyName>NHibernate.Driver.AdoNet</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>Driver for all ADO.Net data providers not covered by other NuGet packages. To be used with NHibernate 5.  Includes: CsharpSqliteDriver, DB2400Driver, DB2Driver, DotConnectMySqlDriver, IfxDriver, IngresDriver, OracleClientDriver, OracleDataClientDriver, OracleLiteDataClientDriver, SybaseAsaClientDriver, SybaseAseClientDriver, SybaseSQLAnywhereDotNet4Driver, and SybaseSQLAnywhereDriver.</Description>
+    <PackageTags>NHibernate; Driver; ADO.Net; sqlite; db2400; db2; mysql; ifx; ingres; oracle; sybase; sqlanywhere; sql anywhere; ianywhere</PackageTags>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>../NHibernate.snk</AssemblyOriginatorKeyFile>
+    <!--<DisableImplicitPackageTargetFallback>true</DisableImplicitPackageTargetFallback>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1591</NoWarn>
-    <DocumentationFile>bin\Debug\NHibernate.Driver.AdoNet.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1591</NoWarn>
-    <DocumentationFile>bin\Release\NHibernate.Driver.AdoNet.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Cfg\Loquacious\ConnectionConfigurationExtensionReflectionBased.cs" />
-    <Compile Include="Driver\CsharpSqliteDriver.cs" />
-    <Compile Include="Driver\DB2400Driver.cs" />
-    <Compile Include="Driver\DB2Driver.cs" />
-    <Compile Include="Driver\DotConnectMySqlDriver.cs" />
-    <Compile Include="Driver\IfxDriver.cs" />
-    <Compile Include="Driver\IngresDriver.cs" />
-    <Compile Include="Driver\OracleClientDriver.cs" />
-    <Compile Include="Driver\OracleDataClientDriver.cs" />
-    <Compile Include="Driver\OracleLiteDataClientDriver.cs" />
-    <Compile Include="Driver\ReflectionBasedDriver.cs" />
-    <Compile Include="Driver\ReflectionDriveConnectionCommandProvider.cs" />
-    <Compile Include="Driver\SybaseAsaClientDriver.cs" />
-    <Compile Include="Driver\SybaseAseClientDriver.cs" />
-    <Compile Include="Driver\SybaseSQLAnywhereDotNet4Driver.cs" />
-    <Compile Include="Driver\SybaseSQLAnywhereDriver.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\NHibernate\NHibernate.csproj">
-      <Project>{5909bfe7-93cf-4e5f-be22-6293368af01d}</Project>
-      <Name>NHibernate</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\NHibernate\NHibernate.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <Content Include="../../LICENSE.txt" />
+  </ItemGroup>
+
+  <Import Project="../SharedAssemblyInfo.targets" />
+
 </Project>

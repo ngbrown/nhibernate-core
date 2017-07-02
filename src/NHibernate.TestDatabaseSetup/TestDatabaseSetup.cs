@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Data.SqlClient;
-using System.Data.SqlServerCe;
 using System.IO;
 using FirebirdSql.Data.FirebirdClient;
 using NHibernate.Test;
@@ -75,9 +73,10 @@ namespace NHibernate.TestDatabaseSetup
 
 		private static void SetupSqlServerOdbc(Cfg.Configuration cfg)
 		{
+#if !NETCOREAPP2_0
 			var connStr = cfg.Properties[Cfg.Environment.ConnectionString];
 
-			using (var conn = new OdbcConnection(connStr.Replace("Database=nhibernateOdbc", "Database=master")))
+			using (var conn = new System.Data.Odbc.OdbcConnection(connStr.Replace("Database=nhibernateOdbc", "Database=master")))
 			{
 				conn.Open();
 
@@ -98,6 +97,9 @@ namespace NHibernate.TestDatabaseSetup
 					cmd.ExecuteNonQuery();
 				}
 			}
+#else
+			throw new NotSupportedException("ODBC not available for .NET Core");
+#endif
 		}
 
 		private static void SetupFirebird(Cfg.Configuration cfg)
@@ -116,6 +118,7 @@ namespace NHibernate.TestDatabaseSetup
 
 		private static void SetupSqlServerCe(Cfg.Configuration cfg)
 		{
+#if !NETCOREAPP2_0
 			try
 			{
 				if (File.Exists("NHibernate.sdf"))
@@ -126,10 +129,13 @@ namespace NHibernate.TestDatabaseSetup
 				Console.WriteLine(e);
 			}
 
-			using (var en = new SqlCeEngine("DataSource=\"NHibernate.sdf\""))
+			using (var en = new System.Data.SqlServerCe.SqlCeEngine("DataSource=\"NHibernate.sdf\""))
 			{
 				en.CreateDatabase();
 			}
+#else
+			throw new NotSupportedException("SQL Server Compact not available for .NET Core");
+#endif
 		}
 
 		private static void SetupNpgsql(Cfg.Configuration cfg)
@@ -184,6 +190,7 @@ namespace NHibernate.TestDatabaseSetup
 
 		private static void SetupOracle(Cfg.Configuration cfg)
 		{
+#if !NETCOREAPP2_0
 			// disabled until system password is set on TeamCity
 
 			//var connStr =
@@ -213,6 +220,9 @@ namespace NHibernate.TestDatabaseSetup
 			//        s.CreateSQLQuery("grant dba to nhibernate with admin option").ExecuteUpdate();
 			//    }
 			//}
+#else
+			throw new NotSupportedException("Oracle driver not available for .NET Core");
+#endif
 		}
 	}
 }

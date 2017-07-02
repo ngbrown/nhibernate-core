@@ -32,6 +32,7 @@ namespace NHibernate.Test.ConnectionStringTest
 			Assert.AreEqual(conStr, cp.PublicConnectionString);
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void CanGetNamedConnectionStringFromConfiguration()
 		{
@@ -42,6 +43,7 @@ namespace NHibernate.Test.ConnectionStringTest
 
 			Assert.AreEqual("TestConnectionString-TestConnectionString", cp.PublicConnectionString);
 		}
+#endif
 	}
 	
 	public class MockConnectionProvider : ConnectionProvider

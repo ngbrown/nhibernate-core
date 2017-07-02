@@ -21,7 +21,7 @@ namespace NHibernate.Test.NHSpecificTest.Dates
 		protected override bool AppliesTo(Engine.ISessionFactoryImplementor factory)
 		{
 			// Cannot handle DbType.DateTimeOffset via ODBC.
-			if (factory.ConnectionProvider.Driver is OdbcDriver)
+			if (factory.ConnectionProvider.Driver.IsOdbcDriver())
 				return false;
 
 			return base.AppliesTo(factory);

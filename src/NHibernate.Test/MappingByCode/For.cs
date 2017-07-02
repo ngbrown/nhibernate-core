@@ -13,7 +13,7 @@ namespace NHibernate.Test.MappingByCode
 			{
 				return null;
 			}
-			return TypeExtensions.DecodeMemberAccessExpression(propertyGetter);
+			return Mapping.ByCode.TypeExtensions.DecodeMemberAccessExpression(propertyGetter);
 		}
 	}
 }

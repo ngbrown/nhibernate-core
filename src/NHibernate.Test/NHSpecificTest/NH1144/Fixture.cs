@@ -25,7 +25,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1144
 		[Test]
 		public void CanSaveInSingleBatch()
 		{
-			if (configuration.Properties[Environment.ConnectionDriver].Contains(typeof (OracleDataClientDriver).Name) == false)
+			if (configuration.Properties[Environment.ConnectionDriver].Contains("OracleDataClientDriver") == false)
 			{
 				Assert.Ignore("Only applicable for Oracle Data Client driver");
 			}

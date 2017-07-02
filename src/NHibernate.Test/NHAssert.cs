@@ -53,7 +53,27 @@ namespace NHibernate.Test
 
 		public static void IsSerializable(object obj, string message, params object[] args)
 		{
+#if !NETCOREAPP2_0
 			Assert.That(obj, Is.BinarySerializable, message, args);
+#else
+			bool succeeded = false;
+			var serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+			var stream = new System.IO.MemoryStream();
+			try
+			{
+				serializer.Serialize(stream, obj);
+
+				stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+				succeeded = serializer.Deserialize(stream) != null;
+			}
+			catch (System.Runtime.Serialization.SerializationException)
+			{
+				// Ignore and return failure
+				succeeded = false;
+			}
+			Assert.That(succeeded, message ?? $"Supplied Type {obj.GetType()} is not serializable", args);
+#endif
 		}
 
 		#endregion

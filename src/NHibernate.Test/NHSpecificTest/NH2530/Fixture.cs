@@ -36,7 +36,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2530
 
 		protected override bool AppliesTo(Dialect.Dialect dialect)
 		{
-			return (dialect is MsSql2000Dialect);
+			return (dialect is MsSql2000Dialect) && dialect.SupportsSqlBatches;
 		}
 
 		[Test]

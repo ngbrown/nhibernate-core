@@ -14,6 +14,7 @@ namespace NHibernate.Test.Tools.hbm2ddl.SchemaMetadataUpdaterTest
 	[TestFixture]
 	public class SchemaMetadataUpdaterFixture
 	{
+#if !NETCOREAPP2_0
 		[Test]
 		public void CanRetrieveReservedWords()
 		{
@@ -149,6 +150,7 @@ namespace NHibernate.Test.Tools.hbm2ddl.SchemaMetadataUpdaterTest
 			// Don't fail incase the driver returns nothing.
 			// This is an info-only test.
 		}
+#endif
 
 		[Test]
 		public void ExplicitAutoQuote()

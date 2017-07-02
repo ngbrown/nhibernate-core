@@ -183,6 +183,7 @@ namespace NHibernate.Test.MappingTest
 			Assert.That(metaAttribute, Is.Not.Null);
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void XmlSerialization()
 		{
@@ -194,5 +195,6 @@ namespace NHibernate.Test.MappingTest
 				Assert.That(mapping, Is.XmlSerializable);
 			}
 		}
+#endif
 	}
 }

@@ -1,0 +1,20 @@
+﻿<Project>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <FileVersion>5.0.0.0</FileVersion>
+    <Version>5.0.0-alpha</Version>
+    <Copyright>Licensed under LGPL.</Copyright>
+    <Authors>NHibernate community, Hibernate community</Authors>
+    <Company>NHibernate.info</Company>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageProjectUrl>http://nhibernate.info</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/logo/NHibernate-NuGet.png</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/nhibernate/nhibernate-core.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors>1717;1574</TreatSpecificWarningsAsErrors>
+  </PropertyGroup>
+</Project>

@@ -19,11 +19,13 @@ namespace NHibernate.Dialect.Schema
 		public override ISet<string> GetReservedWords()
 		{
 			var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+#if !NETSTANDARD2_0
 			DataTable dtReservedWords = Connection.GetSchema(DbMetaDataCollectionNames.ReservedWords);
 			foreach (DataRow row in dtReservedWords.Rows)
 			{
 				result.Add(row["reserved_word"].ToString());
 			}
+#endif
 			return result;
 		}
 		

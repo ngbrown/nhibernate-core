@@ -1,3 +1,4 @@
+#if !NETCOREAPP2_0
 using System;
 using System.Data;
 using System.Data.Common;
@@ -35,3 +36,4 @@ namespace NHibernate.Test.DriverTest
 		}
 	}
 }
+#endif

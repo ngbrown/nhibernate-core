@@ -16,9 +16,9 @@ namespace NHibernate.Test.NHSpecificTest.NH3912
 		protected override bool AppliesTo(ISessionFactoryImplementor factory)
 		{
 			var driver = factory.ConnectionProvider.Driver;
-			return driver is OracleDataClientDriver ||
-			       driver is OracleLiteDataClientDriver ||
-			       driver is OracleManagedDataAccessDriver;
+			return driver.IsOracleDataClientDriver() ||
+			       driver.IsOracleLiteDataClientDriver() ||
+			       driver.IsOracleManagedDataAccessDriver();
 		}
 
 		protected override HbmMapping GetMappings()

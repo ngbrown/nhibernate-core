@@ -1,3 +1,4 @@
+#if !NETCOREAPP2_0
 using System;
 using NHibernate.Driver;
 using NUnit.Framework;
@@ -115,3 +116,4 @@ namespace NHibernate.Test.DriverTest
 		}
 	}
 }
+#endif

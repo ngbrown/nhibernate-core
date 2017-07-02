@@ -10,8 +10,12 @@ namespace NHibernate.Test.Hql.Ast
 	{
 		protected override bool AppliesTo(Dialect.Dialect dialect)
 		{
+#if NETCOREAPP2_0
+			return dialect.SupportsVariableLimit;
+#else
 			return dialect.SupportsVariableLimit
 				&& !(Dialect is Dialect.MsSql2000Dialect &&  cfg.Properties[Environment.ConnectionDriver] == typeof(Driver.OdbcDriver).FullName); // don't know why, but these tests don't work on SQL Server using ODBC
+#endif
 		}
 
 		protected override void OnSetUp()

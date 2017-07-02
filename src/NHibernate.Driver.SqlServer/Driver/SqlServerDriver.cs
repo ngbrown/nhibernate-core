@@ -91,7 +91,11 @@ namespace NHibernate.Driver
 
 		System.Type IEmbeddedBatcherFactoryProvider.BatcherFactoryClass
 		{
+#if !NETSTANDARD2_0
 			get { return typeof(SqlClientBatchingBatcherFactory); }
+#else
+			get { return typeof(NonBatchingBatcherFactory); }
+#endif
 		}
 
 		#endregion

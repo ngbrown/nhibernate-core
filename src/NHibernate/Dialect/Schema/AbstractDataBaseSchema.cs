@@ -97,6 +97,7 @@ namespace NHibernate.Dialect.Schema
 		public virtual ISet<string> GetReservedWords()
 		{
 			var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+#if !NETSTANDARD2_0
 			DataTable dtReservedWords = connection.GetSchema(DbMetaDataCollectionNames.ReservedWords);
 			foreach (DataRow row in dtReservedWords.Rows)
 			{
@@ -112,6 +113,7 @@ namespace NHibernate.Dialect.Schema
 				}
 			}
 
+#endif
 			return result;
 		}
 

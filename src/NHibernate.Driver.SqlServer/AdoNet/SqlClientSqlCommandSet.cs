@@ -30,19 +30,22 @@ namespace NHibernate.AdoNet
 
 		static SqlClientSqlCommandSet()
 		{
-			var sysData = Assembly.Load("System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			var sysData = typeof(System.Data.SqlClient.SqlCommand).Assembly;
 			sqlCmdSetType = sysData.GetType("System.Data.SqlClient.SqlCommandSet");
-			Debug.Assert(sqlCmdSetType != null, "Could not find SqlCommandSet!");
-
-			connectionSetter = DelegateHelper.BuildPropertySetter<SqlConnection>(sqlCmdSetType, "Connection");
-			connectionGetter = DelegateHelper.BuildPropertyGetter<SqlConnection>(sqlCmdSetType, "Connection");
-			transactionSetter = DelegateHelper.BuildPropertySetter<SqlTransaction>(sqlCmdSetType, "Transaction");
-			commandTimeoutSetter = DelegateHelper.BuildPropertySetter<int>(sqlCmdSetType, "CommandTimeout");
-			batchCommandGetter = DelegateHelper.BuildPropertyGetter<System.Data.SqlClient.SqlCommand>(sqlCmdSetType, "BatchCommand");
-			doAppend = DelegateHelper.BuildAction<System.Data.SqlClient.SqlCommand>(sqlCmdSetType, "Append");
-			doExecuteNonQuery = DelegateHelper.BuildFunc<int>(sqlCmdSetType, "ExecuteNonQuery");
-			doDispose = DelegateHelper.BuildAction(sqlCmdSetType, "Dispose");
+			if (sqlCmdSetType != null)
+			{
+				connectionSetter = DelegateHelper.BuildPropertySetter<SqlConnection>(sqlCmdSetType, "Connection");
+				connectionGetter = DelegateHelper.BuildPropertyGetter<SqlConnection>(sqlCmdSetType, "Connection");
+				transactionSetter = DelegateHelper.BuildPropertySetter<SqlTransaction>(sqlCmdSetType, "Transaction");
+				commandTimeoutSetter = DelegateHelper.BuildPropertySetter<int>(sqlCmdSetType, "CommandTimeout");
+				batchCommandGetter = DelegateHelper.BuildPropertyGetter<System.Data.SqlClient.SqlCommand>(sqlCmdSetType, "BatchCommand");
+				doAppend = DelegateHelper.BuildAction<System.Data.SqlClient.SqlCommand>(sqlCmdSetType, "Append");
+				doExecuteNonQuery = DelegateHelper.BuildFunc<int>(sqlCmdSetType, "ExecuteNonQuery");
+				doDispose = DelegateHelper.BuildAction(sqlCmdSetType, "Dispose");
+			}
 		}
+
+		public static bool HasBatchImplementation => sqlCmdSetType != null;
 
 		public SqlClientSqlCommandSet()
 		{

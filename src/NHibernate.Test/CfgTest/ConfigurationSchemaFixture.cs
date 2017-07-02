@@ -24,6 +24,7 @@ namespace NHibernate.Test.CfgTest
 			Assert.Throws<HibernateConfigException>(()=>new HibernateConfiguration(xtr));
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void FromAppConfigTest()
 		{
@@ -32,11 +33,21 @@ namespace NHibernate.Test.CfgTest
 			Assert.IsTrue(hc.UseReflectionOptimizer);
 			Assert.AreEqual("NHibernate.Test", hc.SessionFactory.Name);
 		}
+#endif
+
+		[Test]
+		public void FromConfigForExePathTest()
+		{
+			IHibernateConfiguration hc = TestsContext.GetTestAssemblyHibernateConfiguration();
+			Assert.That(hc.ByteCodeProviderType, Is.EqualTo("lcg"));
+			Assert.IsTrue(hc.UseReflectionOptimizer);
+			Assert.AreEqual("NHibernate.Test", hc.SessionFactory.Name);
+		}
 
 		[Test]
 		public void IgnoreSystemOutOfAppConfig()
 		{
-			IHibernateConfiguration hc = ConfigurationManager.GetSection("hibernate-configuration") as IHibernateConfiguration;
+			IHibernateConfiguration hc = TestsContext.GetTestAssemblyHibernateConfiguration();
 			string xml =
 			@"<?xml version='1.0' encoding='utf-8' ?>
 <hibernate-configuration xmlns='urn:nhibernate-configuration-2.2'>

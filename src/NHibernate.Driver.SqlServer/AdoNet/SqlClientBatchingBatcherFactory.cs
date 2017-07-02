@@ -6,7 +6,9 @@ namespace NHibernate.AdoNet
 	{
 		public virtual IBatcher CreateBatcher(ConnectionManager connectionManager, IInterceptor interceptor)
 		{
-			return new SqlClientBatchingBatcher(connectionManager, interceptor);
+			return SqlClientSqlCommandSet.HasBatchImplementation
+				? (IBatcher) new SqlClientBatchingBatcher(connectionManager, interceptor)
+				: (IBatcher) new NonBatchingBatcher(connectionManager, interceptor);
 		}
 	}
 }

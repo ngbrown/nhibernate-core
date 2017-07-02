@@ -77,6 +77,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3383
 			AssertDeserializedMappingClasses(deserializedClassMapping);
 		}
 
+#if !NETCOREAPP2_0
 		// This test uses a seperate AppDomain to simulate the loading of a Configuration that was
 		// serialized to the disk and is later deserialized in a new process.
 		[Test]
@@ -109,6 +110,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3383
 				}
 			}
 		}
+#endif
 
 		private static RootClass CreateMappingClasses()
 		{

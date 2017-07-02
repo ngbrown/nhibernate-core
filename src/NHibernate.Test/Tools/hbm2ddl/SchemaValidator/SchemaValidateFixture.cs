@@ -20,6 +20,7 @@ namespace NHibernate.Test.Tools.hbm2ddl.SchemaValidator
 			validator.Validate();
 		}
 
+#if !NETCOREAPP2_0
 		[Test, SetCulture("tr-TR"), SetUICulture("tr-TR")]
 		public void ShouldVerifySameTableTurkish()
 		{
@@ -43,6 +44,7 @@ namespace NHibernate.Test.Tools.hbm2ddl.SchemaValidator
 			var validator = new Tool.hbm2ddl.SchemaValidator(cfg);
 			validator.Validate();
 		}
+#endif
 
 		[Test]
 		public void ShouldNotVerifyModifiedTable()

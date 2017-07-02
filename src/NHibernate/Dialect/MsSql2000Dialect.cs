@@ -675,7 +675,14 @@ namespace NHibernate.Dialect
 
 		public override bool SupportsSqlBatches
 		{
-			get { return true; }
+			get
+			{
+#if NETSTANDARD2_0
+				return false;
+#else
+				return true;
+#endif
+			}
 		}
 
 		#region Overridden informational metadata

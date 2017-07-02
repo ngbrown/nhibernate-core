@@ -166,7 +166,11 @@ namespace NHibernate.Driver
 		/// <summary></summary>
 		public override DataTable GetSchemaTable()
 		{
+#if NETSTANDARD2_0
+			throw new NotSupportedException("GetSchemaTable not supported in NETSTANDARD2_0 implementations");
+#else
 			return GetCurrentResult().GetSchemaTable();
+#endif
 		}
 
 		protected override void Dispose(bool disposing)
@@ -466,7 +470,9 @@ namespace NHibernate.Driver
 			private readonly object[][] records;
 			private int colCount = 0;
 
+#if !NETSTANDARD2_0
 			private readonly DataTable schemaTable;
+#endif
 
 			// key = field name
 			// index = field index
@@ -485,7 +491,9 @@ namespace NHibernate.Driver
 			/// </param>
 			internal NResult(DbDataReader reader, bool isMidstream)
 			{
+#if !NETSTANDARD2_0
 				schemaTable = reader.GetSchemaTable();
+#endif
 
 				List<object[]> recordsList = new List<object[]>();
 				int rowIndex = 0;
@@ -561,11 +569,13 @@ namespace NHibernate.Driver
 				return fieldIndexToName[colIndex];
 			}
 
+#if !NETSTANDARD2_0
 			/// <summary></summary>
 			public DataTable GetSchemaTable()
 			{
 				return schemaTable;
 			}
+#endif
 
 			/// <summary>
 			/// 
