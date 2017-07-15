@@ -15,16 +15,16 @@ namespace NHibernate.Dialect
 		protected override void RegisterCharacterTypeMappings()
 		{
 			base.RegisterCharacterTypeMappings();
-			RegisterColumnType(DbType.String, SqlClientDriver.MaxSizeForClob, "NVARCHAR(MAX)");
-			RegisterColumnType(DbType.AnsiString, SqlClientDriver.MaxSizeForAnsiClob, "VARCHAR(MAX)");
+			RegisterColumnType(DbType.String, SqlClientParameterHelper.MaxSizeForClob, "NVARCHAR(MAX)");
+			RegisterColumnType(DbType.AnsiString, SqlClientParameterHelper.MaxSizeForAnsiClob, "VARCHAR(MAX)");
 		}
 
 		protected override void RegisterLargeObjectTypeMappings()
 		{
 			base.RegisterLargeObjectTypeMappings();
 			RegisterColumnType(DbType.Binary, "VARBINARY(MAX)");
-			RegisterColumnType(DbType.Binary, SqlClientDriver.MaxSizeForLengthLimitedBinary, "VARBINARY($l)");
-			RegisterColumnType(DbType.Binary, SqlClientDriver.MaxSizeForBlob, "VARBINARY(MAX)");
+			RegisterColumnType(DbType.Binary, SqlClientParameterHelper.MaxSizeForLengthLimitedBinary, "VARBINARY($l)");
+			RegisterColumnType(DbType.Binary, SqlClientParameterHelper.MaxSizeForBlob, "VARBINARY(MAX)");
 		}
 
 		protected override void RegisterKeywords()

@@ -20,7 +20,7 @@ namespace NHibernate.Dialect
 	///	</listheader>
 	///	<item>
 	///		<term>connection.driver_class</term>
-	///		<description><see cref="NHibernate.Driver.NpgsqlDriver" /></description>
+	///		<description>NHibernate.Driver.NpgsqlDriver</description>
 	///	</item>
 	/// </list>
 	/// </remarks>
@@ -28,7 +28,7 @@ namespace NHibernate.Dialect
 	{
 		public PostgreSQLDialect()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.NpgsqlDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.NpgsqlDriver, NHibernate.Driver.Npgsql";
 			
 			RegisterColumnType(DbType.AnsiStringFixedLength, "char(255)");
 			RegisterColumnType(DbType.AnsiStringFixedLength, 8000, "char($l)");

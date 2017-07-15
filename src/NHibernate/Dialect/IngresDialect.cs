@@ -15,7 +15,7 @@ namespace NHibernate.Dialect
 	///		</listheader>
 	///		<item>
 	///			<term>connection.driver_class</term>
-	///			<description><see cref="NHibernate.Driver.IngresDriver" /></description>
+	///			<description>NHibernate.Driver.IngresDriver</description>
 	///		</item>
 	/// </list>
 	/// </remarks>
@@ -49,7 +49,7 @@ namespace NHibernate.Dialect
 			//RegisterColumnType(DbType.String, 1073741823, "text"); //
 			//RegisterColumnType(DbType.Time, "time");
 
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.IngresDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.IngresDriver, NHibernate.Driver.AdoNet";
 		}
 
 		#region Overridden informational metadata

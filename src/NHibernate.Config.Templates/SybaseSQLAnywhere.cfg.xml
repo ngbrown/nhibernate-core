@@ -6,7 +6,7 @@ for your own use before compiling tests in Visual Studio.
 -->
 <hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
 	<session-factory name="NHibernate.Test">
-		<property name="connection.driver_class">NHibernate.Driver.SybaseSQLAnywhereDriver</property>
+		<property name="connection.driver_class">NHibernate.Driver.SybaseSQLAnywhereDriver, NHibernate.Driver.AdoNet</property>
 		<property name="connection.connection_string">
 			UID=DBA;PWD=sql;Server=localhost;DBN=nhibernate;DBF=c:\nhibernate.db;ASTOP=No
 		</property>

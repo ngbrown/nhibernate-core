@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>NHibernate.Driver.Odbc</id>
+    <version>x.y.z</version>
+    <authors>NHibernate community, Hibernate community</authors>
+    <description>
+      Driver for Odbc DataProvider to be used with NHibernate 5.  Always look for a native .NET DataProvider before using the Odbc DataProvider.
+    </description>
+    <language>en-US</language>
+    <tags>NHibernate; Driver; ODBC</tags>
+    <dependencies>
+      <dependency id="NHibernate" version="[x.y.z,x.y.z)" />
+    </dependencies>
+    <projectUrl>
+      http://nhibernate.info
+    </projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/logo/NHibernate-NuGet.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/LICENSE.txt</licenseUrl>
+  </metadata>
+  <files>
+    <file src="NHibernate.Driver.Odbc.dll" target="lib\net461" />
+    <file src="NHibernate.Driver.Odbc.pdb" target="lib\net461" />
+    <file src="NHibernate.Driver.Odbc.xml" target="lib\net461" />
+    <file src="..\..\..\src\NHibernate.Driver.Odbc\**\*.cs" target="src" />
+  </files>
+</package>

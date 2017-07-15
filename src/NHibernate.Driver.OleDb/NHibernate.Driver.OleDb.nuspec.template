@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>NHibernate.Driver.OleDb</id>
+    <version>x.y.z</version>
+    <authors>NHibernate community, Hibernate community</authors>
+    <description>
+      Driver for OleDb DataProvider to be used with NHibernate 5.  Always look for a native .NET DataProvider before using the OleDb DataProvider.
+    </description>
+    <language>en-US</language>
+    <tags>NHibernate; Driver; OleDb</tags>
+    <dependencies>
+      <dependency id="NHibernate" version="[x.y.z,x.y.z)" />
+    </dependencies>
+    <projectUrl>
+      http://nhibernate.info
+    </projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/logo/NHibernate-NuGet.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/LICENSE.txt</licenseUrl>
+  </metadata>
+  <files>
+    <file src="NHibernate.Driver.OleDb.dll" target="lib\net461" />
+    <file src="NHibernate.Driver.OleDb.pdb" target="lib\net461" />
+    <file src="NHibernate.Driver.OleDb.xml" target="lib\net461" />
+    <file src="..\..\..\src\NHibernate.Driver.OleDb\**\*.cs" target="src" />
+  </files>
+</package>

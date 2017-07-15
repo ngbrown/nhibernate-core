@@ -9,7 +9,7 @@ namespace NHibernate.Test.Pagination
 	/// Class to work with CustomMsSqlDialect to allow
 	/// verification of simulated limit parameters
 	/// </summary>
-	public class CustomMsSqlDriver : SqlClientDriver
+	public class CustomMsSqlDriver : SqlServerDriver
 	{
 		public CustomMsSqlDialect CustomMsSqlDialect;
 

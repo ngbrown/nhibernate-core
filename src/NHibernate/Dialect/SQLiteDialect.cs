@@ -176,7 +176,7 @@ namespace NHibernate.Dialect
 
 		protected virtual void RegisterDefaultProperties()
 		{
-			DefaultProperties[Cfg.Environment.ConnectionDriver] = "NHibernate.Driver.SQLite20Driver";
+			DefaultProperties[Cfg.Environment.ConnectionDriver] = "NHibernate.Driver.SQLiteDriver, NHibernate.Driver.SQLite";
 			DefaultProperties[Cfg.Environment.QuerySubstitutions] = "true 1, false 0, yes 'Y', no 'N'";
 		}
 

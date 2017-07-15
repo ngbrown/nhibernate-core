@@ -24,7 +24,7 @@ namespace NHibernate.Dialect
 	///	</listheader>
 	///	<item>
 	///		<term>connection.driver_class</term>
-	///		<description><see cref="NHibernate.Driver.SybaseAsaClientDriver" /></description>
+	///		<description>NHibernate.Driver.SybaseAsaClientDriver</description>
 	///	</item>
 	///	<item>
 	///		<term>prepare_sql</term>
@@ -36,7 +36,7 @@ namespace NHibernate.Dialect
 	{
 		public SybaseASA9Dialect()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SybaseAsaClientDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SybaseAsaClientDriver, NHibernate.Driver.AdoNet";
 			DefaultProperties[Environment.PrepareSql] = "false";
 
 			RegisterColumnType(DbType.AnsiStringFixedLength, 255, "CHAR($l)");

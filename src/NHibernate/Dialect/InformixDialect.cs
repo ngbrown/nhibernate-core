@@ -27,7 +27,7 @@ namespace NHibernate.Dialect
 	///		</listheader>
 	///		<item>
 	///			<term>connection.driver_class</term>
-	///			<description><see cref="NHibernate.Driver.OdbcDriver" /></description>
+	///			<description>NHibernate.Driver.OdbcDriver</description>
 	///		</item>
 	/// </list>
 	/// </remarks>
@@ -88,7 +88,7 @@ namespace NHibernate.Dialect
 			RegisterFunction("instr", new StandardSQLFunction("instr", NHibernateUtil.String));
 			// actually there is no Instr (or equivalent) in Informix; you have to write your own SPL or UDR
 
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.OdbcDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.OdbcDriver, NHibernate.Driver.Odbc";
 			DefaultProperties[Environment.PrepareSql] = "true";
 		}
 

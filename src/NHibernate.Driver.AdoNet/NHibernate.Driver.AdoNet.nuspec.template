@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>NHibernate.Driver.AdoNet</id>
+    <version>x.y.z</version>
+    <authors>NHibernate community, Hibernate community</authors>
+    <description>
+      Driver for all ADO.Net data providers not covered by other NuGet packages. To be used with NHibernate 5.  Includes: CsharpSqliteDriver, DB2400Driver, DB2Driver, DotConnectMySqlDriver, IfxDriver, IngresDriver, OracleClientDriver, OracleDataClientDriver, OracleLiteDataClientDriver, SybaseAsaClientDriver, SybaseAseClientDriver, SybaseSQLAnywhereDotNet4Driver, and SybaseSQLAnywhereDriver.
+    </description>
+    <language>en-US</language>
+    <tags>NHibernate; Driver; ADO.Net; sqlite; db2400; db2; mysql; ifx; ingres; oracle; sybase; sqlanywhere; sql anywhere; ianywhere</tags>
+    <dependencies>
+      <dependency id="NHibernate" version="[x.y.z,x.y.z)" />
+    </dependencies>
+    <projectUrl>
+      http://nhibernate.info
+    </projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/logo/NHibernate-NuGet.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/LICENSE.txt</licenseUrl>
+  </metadata>
+  <files>
+    <file src="NHibernate.Driver.AdoNet.dll" target="lib\net461" />
+    <file src="NHibernate.Driver.AdoNet.pdb" target="lib\net461" />
+    <file src="NHibernate.Driver.AdoNet.xml" target="lib\net461" />
+    <file src="..\..\..\src\NHibernate.Driver.AdoNet\**\*.cs" target="src" />
+  </files>
+</package>

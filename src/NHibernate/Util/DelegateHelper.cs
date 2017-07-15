@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace NHibernate.Util
 {
-	internal static class DelegateHelper
+	public static class DelegateHelper
 	{
 		public static Func<object, T> BuildPropertyGetter<T>(System.Type type, string propertyName)
 		{

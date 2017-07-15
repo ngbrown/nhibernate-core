@@ -17,7 +17,7 @@ namespace NHibernate.Dialect
 	///		</listheader>
 	///		<item>
 	///			<term>connection.driver_class</term>
-	///			<description><see cref="NHibernate.Driver.OracleLiteDataClientDriver" /></description>
+	///			<description>NHibernate.Driver.OracleLiteDataClientDriver</description>
 	///		</item>
 	/// </list>
 	/// </remarks>
@@ -27,7 +27,7 @@ namespace NHibernate.Dialect
 		public OracleLiteDialect()
 		{
 			DefaultProperties[Environment.PrepareSql] = "false";
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.OracleLiteDataClientDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.OracleLiteDataClientDriver, NHibernate.Driver.AdoNet";
 
 			RegisterColumnType(DbType.AnsiStringFixedLength, "CHAR(255)");
 			RegisterColumnType(DbType.AnsiStringFixedLength, 2000, "CHAR($l)");

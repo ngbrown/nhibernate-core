@@ -57,7 +57,7 @@ namespace NHibernate.Test.TypesTest
 		public void ShouldPreventInsertionOfVeryLongStringThatWouldBeTruncated()
 		{
 			// This test case is for when the current driver will use a parameter size
-			// that is significantly larger than the mapped column size (e.g. SqlClientDriver currently).
+			// that is significantly larger than the mapped column size (e.g. SqlServerDriver currently).
 
 			// Note: This test could possible be written as
 			//   "database must raise an error OR it must store and return the full value"

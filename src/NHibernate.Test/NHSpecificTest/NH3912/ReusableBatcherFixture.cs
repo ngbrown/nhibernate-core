@@ -18,7 +18,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3912
 			var driver = factory.ConnectionProvider.Driver;
 			return driver is OracleDataClientDriver ||
 			       driver is OracleLiteDataClientDriver ||
-			       driver is OracleManagedDataClientDriver;
+			       driver is OracleManagedDataAccessDriver;
 		}
 
 		protected override HbmMapping GetMappings()

@@ -10,7 +10,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1507
 	{
 		protected override bool AppliesTo(Engine.ISessionFactoryImplementor factory)
 		{
-			return !(factory.ConnectionProvider.Driver is OracleManagedDataClientDriver);
+			return !(factory.ConnectionProvider.Driver is OracleManagedDataAccessDriver);
 		}
 
 		protected override void OnSetUp()
