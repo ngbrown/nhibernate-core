@@ -9,13 +9,13 @@ namespace NHibernate.Driver
 	/// <summary>
 	/// A NHibernate Driver for using the SqlClient DataProvider
 	/// </summary>
-	public class SqlClientDriver : DriverBase, IEmbeddedBatcherFactoryProvider
+	public class SqlServerDriver : DriverBase, IEmbeddedBatcherFactoryProvider
 	{
 		//http://stackoverflow.com/a/7264795/259946
 
 		/// <summary>
 		/// Creates an uninitialized <see cref="DbConnection" /> object for
-		/// the SqlClientDriver.
+		/// the SqlServerDriver.
 		/// </summary>
 		/// <value>An unitialized <see cref="System.Data.SqlClient.SqlConnection"/> object.</value>
 		public override DbConnection CreateConnection()
@@ -25,7 +25,7 @@ namespace NHibernate.Driver
 
 		/// <summary>
 		/// Creates an uninitialized <see cref="DbCommand" /> object for
-		/// the SqlClientDriver.
+		/// the SqlServerDriver.
 		/// </summary>
 		/// <value>An unitialized <see cref="System.Data.SqlClient.SqlCommand"/> object.</value>
 		public override DbCommand CreateCommand()

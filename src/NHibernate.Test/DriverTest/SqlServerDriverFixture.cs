@@ -26,7 +26,7 @@ namespace NHibernate.Test.DriverTest
 	}
 
 	[TestFixture]
-	public class SqlClientDriverFixture : TestCase
+	public class SqlServerDriverFixture : TestCase
 	{
 		protected override string MappingsAssembly
 		{
@@ -90,8 +90,8 @@ namespace NHibernate.Test.DriverTest
 		[Test]
 		public void QueryPlansAreReused()
 		{
-			if (!(Sfi.ConnectionProvider.Driver is SqlClientDriver))
-				Assert.Ignore("Test designed for SqlClientDriver only");
+			if (!(Sfi.ConnectionProvider.Driver is SqlServerDriver))
+				Assert.Ignore("Test designed for SqlServerDriver only");
 
 			using (ISession s = OpenSession())
 			using (ITransaction t = s.BeginTransaction())

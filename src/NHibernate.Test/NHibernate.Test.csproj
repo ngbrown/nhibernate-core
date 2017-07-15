@@ -268,7 +268,7 @@
     <Compile Include="DriverTest\FirebirdClientDriverFixture.cs" />
     <Compile Include="DriverTest\ReflectionBasedDriverTest.cs" />
     <Compile Include="DriverTest\Sql2008DateTime2Test.cs" />
-    <Compile Include="DriverTest\SqlClientDriverFixture.cs" />
+    <Compile Include="DriverTest\SqlServerDriverFixture.cs" />
     <Compile Include="DriverTest\SqlServerCeDriverFixture.cs" />
     <Compile Include="DynamicProxyTests\GenericMethodsTests\IMyGenericInterface.cs" />
     <Compile Include="DynamicProxyTests\GenericMethodsTests\IMyGenericInterfaceBase.cs" />
@@ -1369,7 +1369,7 @@
     <Compile Include="NHSpecificTest\NH2982\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH2982\Model.cs" />
     <Compile Include="NHSpecificTest\NH3004\Fixture.cs" />
-    <Compile Include="NHSpecificTest\NH3004\TestSqlClientDriver.cs" />
+    <Compile Include="NHSpecificTest\NH3004\TestSqlServerDriver.cs" />
     <Compile Include="NHSpecificTest\NH3074\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH3074\Model.cs" />
     <Compile Include="NHSpecificTest\NH3121\Fixture.cs" />
@@ -2853,7 +2853,7 @@
       <Project>{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}</Project>
       <Name>NHibernate.Driver.Oracle.ManagedDataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NHibernate.Driver.SqlClient\NHibernate.Driver.SqlClient.csproj">
+    <ProjectReference Include="..\NHibernate.Driver.SqlServer\NHibernate.Driver.SqlServer.csproj">
       <Project>{cf9feec5-3403-4f3f-9e4f-f0bafe95de39}</Project>
       <Name>NHibernate.Driver.SqlClient</Name>
     </ProjectReference>

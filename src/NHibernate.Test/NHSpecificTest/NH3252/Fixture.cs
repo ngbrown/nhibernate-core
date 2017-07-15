@@ -12,7 +12,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3252
 	{
 		protected override bool AppliesTo(ISessionFactoryImplementor factory)
 		{
-			return factory.ConnectionProvider.Driver is SqlClientDriver;
+			return factory.ConnectionProvider.Driver is SqlServerDriver;
 		}
 
 		[Test]

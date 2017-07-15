@@ -21,7 +21,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NHibernate.Test.VisualBasic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{2A64334E-8456-4426-B50A-6172C6C3FDD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.SqlClient", "NHibernate.Driver.SqlClient\NHibernate.Driver.SqlClient.csproj", "{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.SqlServer", "NHibernate.Driver.SqlServer\NHibernate.Driver.SqlServer.csproj", "{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.AdoNet", "NHibernate.Driver.AdoNet\NHibernate.Driver.AdoNet.csproj", "{AED62C8C-4391-479E-AFD5-E41DD860D23E}"
 EndProject
