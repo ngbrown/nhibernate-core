@@ -164,6 +164,7 @@
 		<property name="bin-pack.tmpdir" value="${build.dir}/tmp-bin" />
 		<property name="bin-pack.conf-template" value="${bin-pack.tmpdir}/Configuration_Templates" />
 		<property name="bin-pack.required" value="${bin-pack.tmpdir}/Required_Bins" />
+		<property name="bin-pack.drivers" value="${bin-pack.tmpdir}/Select_Single_Driver" />
 		<property name="bin-pack.tests" value="${bin-pack.tmpdir}/Tests" />
 		
 		<copy file="releasenotes.txt" todir="${bin-pack.tmpdir}"/>
@@ -192,7 +193,11 @@
 				<include name="NHibernate.???" />
 			</fileset>
 		</copy>
-		<!--Required Bins for lazy loading NHibernate.ByteCode.Castle.dll-->
+		<copy todir="${bin-pack.drivers}">
+			<fileset basedir="${bin.dir}">
+				<include name="NHibernate.Driver.*.???" />
+			</fileset>
+		</copy>
 		<!-- Tests -->
 		<copy file="${bin.dir}/TestEnbeddedConfig.cfg.xml" todir="${bin-pack.tests}"/>
 		<copy file="${bin.dir}/ABC.hbm.xml" todir="${bin-pack.tests}"/>
@@ -244,6 +249,16 @@
 
 	<fileset id="nugetfiles.all" basedir="src">
 		<include name="NHibernate/NHibernate.build" />
+		<include name="NHibernate.Driver.AdoNet/NHibernate.Driver.AdoNet.build" />
+		<include name="NHibernate.Driver.FirebirdClient/NHibernate.Driver.FirebirdClient.build" />
+		<include name="NHibernate.Driver.MySql/NHibernate.Driver.MySql.build" />
+		<include name="NHibernate.Driver.Npgsql/NHibernate.Driver.Npgsql.build" />
+		<include name="NHibernate.Driver.Odbc/NHibernate.Driver.Odbc.build" />
+		<include name="NHibernate.Driver.OleDb/NHibernate.Driver.OleDb.build" />
+		<include name="NHibernate.Driver.Oracle.ManagedDataAccess/NHibernate.Driver.Oracle.ManagedDataAccess.build" />
+		<include name="NHibernate.Driver.SQLite/NHibernate.Driver.SQLite.build" />
+		<include name="NHibernate.Driver.SqlServer/NHibernate.Driver.SqlServer.build" />
+		<include name="NHibernate.Driver.SqlServer.Compact/NHibernate.Driver.SqlServer.Compact.build" />
 	</fileset>
 
 	<target name="nuspec" depends="init nuget.set-properties" description="Create nuspec files">
