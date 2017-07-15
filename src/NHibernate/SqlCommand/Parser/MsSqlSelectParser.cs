@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NHibernate.SqlCommand.Parser
 {
-	using System.Linq;
-
-	/// <summary>
+    /// <summary>
 	/// Represents SQL Server SELECT query parser, primarily intended to support generation of 
 	/// limit queries by SQL Server dialects.
 	/// </summary>

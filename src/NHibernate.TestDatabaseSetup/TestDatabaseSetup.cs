@@ -16,17 +16,17 @@ namespace NHibernate.TestDatabaseSetup
 	{
 		private static readonly IDictionary<string, Action<Cfg.Configuration>> SetupMethods = new Dictionary<string, Action<Cfg.Configuration>>
 			{
-				{"NHibernate.Driver.SqlClientDriver", SetupSqlServer},
-				{"NHibernate.Driver.Sql2008ClientDriver", SetupSqlServer},
-				{"NHibernate.Driver.OdbcDriver", SetupSqlServerOdbc},
-				{"NHibernate.Driver.FirebirdClientDriver", SetupFirebird},
-				{"NHibernate.Driver.SQLite20Driver", SetupSQLite},
-				{"NHibernate.Driver.NpgsqlDriver", SetupNpgsql},
-				{"NHibernate.Driver.OracleDataClientDriver", SetupOracle},
-				{"NHibernate.Driver.MySqlDataDriver", SetupMySql},
-				{"NHibernate.Driver.OracleClientDriver", SetupOracle},
-				{"NHibernate.Driver.OracleManagedDataClientDriver", SetupOracle},
-				{"NHibernate.Driver.SqlServerCeDriver", SetupSqlServerCe}
+				{"NHibernate.Driver.SqlClientDriver, NHibernate.Driver.SqlClient", SetupSqlServer},
+				{"NHibernate.Driver.Sql2008ClientDriver, NHibernate.Driver.SqlClient", SetupSqlServer},
+				{"NHibernate.Driver.OdbcDriver, NHibernate.Driver.Odbc", SetupSqlServerOdbc},
+				{"NHibernate.Driver.FirebirdClientDriver, NHibernate.Driver.FirebirdClient", SetupFirebird},
+				{"NHibernate.Driver.SQLiteDriver, NHibernate.Driver.SQLite", SetupSQLite},
+				{"NHibernate.Driver.NpgsqlDriver, NHibernate.Driver.Npgsql", SetupNpgsql},
+				{"NHibernate.Driver.OracleDataClientDriver, NHibernate.Driver.AdoNet", SetupOracle},
+				{"NHibernate.Driver.MySqlDataDriver, NHibernate.Driver.MySql", SetupMySql},
+				{"NHibernate.Driver.OracleClientDriver, NHibernate.Driver.AdoNet", SetupOracle},
+				{"NHibernate.Driver.OracleManagedDataAccessDriver, NHibernate.Driver.Oracle.ManagedDataAccess", SetupOracle},
+				{"NHibernate.Driver.SqlServerCompactDriver, NHibernate.Driver.SqlServer.Compact", SetupSqlServerCe}
 			};
 
 		private static void SetupMySql(Cfg.Configuration obj)

@@ -7,6 +7,8 @@ namespace NHibernate.Dialect
 {
 	public class MsSql2008Dialect : MsSql2005Dialect
 	{
+		private static readonly IInternalLogger log = LoggerProvider.LoggerFor(typeof(MsSql2008Dialect));
+
 		protected override void RegisterDateTimeTypeMappings()
 		{
 			base.RegisterDateTimeTypeMappings();
@@ -33,8 +35,12 @@ namespace NHibernate.Dialect
 
 		protected override void RegisterDefaultProperties()
 		{
+			if (!DefaultProperties.ContainsKey(Environment.ConnectionDriver))
+			{
+				log.Warn("Specify the connection.driver_class");
+			}
 			base.RegisterDefaultProperties();
-			DefaultProperties[Environment.ConnectionDriver] = typeof(Sql2008ClientDriver).AssemblyQualifiedName;
+//			DefaultProperties[Environment.ConnectionDriver] = typeof(Sql2008ClientDriver).AssemblyQualifiedName;
 		}
 	}
 }

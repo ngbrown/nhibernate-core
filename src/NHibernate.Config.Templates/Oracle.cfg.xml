@@ -7,7 +7,7 @@ for your own use before compile tests in VisualStudio.
 <!-- This is the System.Data.OracleClient.dll provider for Oracle from MS -->
 <hibernate-configuration  xmlns="urn:nhibernate-configuration-2.2" >
 	<session-factory name="NHibernate.Test">
-		<property name="connection.driver_class">NHibernate.Driver.OracleClientDriver</property>
+		<property name="connection.driver_class">NHibernate.Driver.OracleClientDriver, NHibernate.Driver.AdoNet</property>
 		<property name="connection.connection_string">
 			User ID=nhibernate;Password=nhibernate;Data Source=localhost
 		</property>

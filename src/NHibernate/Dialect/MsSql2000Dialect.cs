@@ -28,7 +28,7 @@ namespace NHibernate.Dialect
 	///	</listheader>
 	///	<item>
 	///		<term>connection.driver_class</term>
-	///		<description><see cref="NHibernate.Driver.SqlClientDriver" /></description>
+	///		<description>NHibernate.Driver.SqlClientDriver</description>
 	///	</item>
 	///	<item>
 	///		<term>adonet.batch_size</term>
@@ -59,7 +59,7 @@ namespace NHibernate.Dialect
 
 		protected virtual void RegisterDefaultProperties()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SqlClientDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SqlClientDriver, NHibernate.Driver.SqlClient";
 			DefaultProperties[Environment.BatchSize] = "20";
 			DefaultProperties[Environment.QuerySubstitutions] = "true 1, false 0, yes 'Y', no 'N'";
 		}
@@ -356,8 +356,8 @@ namespace NHibernate.Dialect
 		protected virtual void RegisterLargeObjectTypeMappings()
 		{
 			RegisterColumnType(DbType.Binary, "VARBINARY(8000)");
-			RegisterColumnType(DbType.Binary, SqlClientDriver.MaxSizeForLengthLimitedBinary, "VARBINARY($l)");
-			RegisterColumnType(DbType.Binary, SqlClientDriver.MaxSizeForBlob, "IMAGE");
+			RegisterColumnType(DbType.Binary, SqlClientParameterHelper.MaxSizeForLengthLimitedBinary, "VARBINARY($l)");
+			RegisterColumnType(DbType.Binary, SqlClientParameterHelper.MaxSizeForBlob, "IMAGE");
 		}
 
 		protected virtual void RegisterDateTimeTypeMappings()
@@ -386,13 +386,13 @@ namespace NHibernate.Dialect
 			RegisterColumnType(DbType.AnsiStringFixedLength, "CHAR(255)");
 			RegisterColumnType(DbType.AnsiStringFixedLength, 8000, "CHAR($l)");
 			RegisterColumnType(DbType.AnsiString, "VARCHAR(255)");
-			RegisterColumnType(DbType.AnsiString, SqlClientDriver.MaxSizeForLengthLimitedAnsiString, "VARCHAR($l)");
-			RegisterColumnType(DbType.AnsiString, SqlClientDriver.MaxSizeForAnsiClob, "TEXT");
+			RegisterColumnType(DbType.AnsiString, SqlClientParameterHelper.MaxSizeForLengthLimitedAnsiString, "VARCHAR($l)");
+			RegisterColumnType(DbType.AnsiString, SqlClientParameterHelper.MaxSizeForAnsiClob, "TEXT");
 			RegisterColumnType(DbType.StringFixedLength, "NCHAR(255)");
-			RegisterColumnType(DbType.StringFixedLength, SqlClientDriver.MaxSizeForLengthLimitedString, "NCHAR($l)");
+			RegisterColumnType(DbType.StringFixedLength, SqlClientParameterHelper.MaxSizeForLengthLimitedString, "NCHAR($l)");
 			RegisterColumnType(DbType.String, "NVARCHAR(255)");
-			RegisterColumnType(DbType.String, SqlClientDriver.MaxSizeForLengthLimitedString, "NVARCHAR($l)");
-			RegisterColumnType(DbType.String, SqlClientDriver.MaxSizeForClob, "NTEXT");
+			RegisterColumnType(DbType.String, SqlClientParameterHelper.MaxSizeForLengthLimitedString, "NVARCHAR($l)");
+			RegisterColumnType(DbType.String, SqlClientParameterHelper.MaxSizeForClob, "NTEXT");
 		}
 
 		public override string AddColumnString

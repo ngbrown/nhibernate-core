@@ -35,6 +35,8 @@
     <StartProgram>$(MSBuildProjectDirectory)\..\..\Tools\nunit\nunit-x86.exe</StartProgram>
     <StartArguments>NHibernate.Test.dll</StartArguments>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,6 +98,13 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Data.SQLite, Version=1.0.105.1, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.1\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -2816,6 +2825,46 @@
       <Project>{5C649B55-1B3F-4C38-9998-1B043E94A244}</Project>
       <Name>NHibernate.DomainModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.FirebirdClient\NHibernate.Driver.FirebirdClient.csproj">
+      <Project>{dadd54c1-3679-4672-9774-9362428eb9e0}</Project>
+      <Name>NHibernate.Driver.FirebirdClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.MySql\NHibernate.Driver.MySql.csproj">
+      <Project>{4f5f0c13-f302-4cee-b60e-a55d7c30e3f8}</Project>
+      <Name>NHibernate.Driver.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.Npgsql\NHibernate.Driver.Npgsql.csproj">
+      <Project>{c7c835dc-0a59-4227-9c3c-0af0633cd68c}</Project>
+      <Name>NHibernate.Driver.Npgsql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.Odbc\NHibernate.Driver.Odbc.csproj">
+      <Project>{038db367-4858-4747-b36c-6cc1e684684f}</Project>
+      <Name>NHibernate.Driver.Odbc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.OleDb\NHibernate.Driver.OleDb.csproj">
+      <Project>{76945e59-f64e-4ea2-893b-272d7ec234bb}</Project>
+      <Name>NHibernate.Driver.OleDb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.AdoNet\NHibernate.Driver.AdoNet.csproj">
+      <Project>{aed62c8c-4391-479e-afd5-e41dd860d23e}</Project>
+      <Name>NHibernate.Driver.AdoNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.Oracle.ManagedDataAccess\NHibernate.Driver.Oracle.ManagedDataAccess.csproj">
+      <Project>{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}</Project>
+      <Name>NHibernate.Driver.Oracle.ManagedDataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.SqlClient\NHibernate.Driver.SqlClient.csproj">
+      <Project>{cf9feec5-3403-4f3f-9e4f-f0bafe95de39}</Project>
+      <Name>NHibernate.Driver.SqlClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.SQLite\NHibernate.Driver.SQLite.csproj">
+      <Project>{99fe5a5c-f732-40a3-bee6-ed5adc393862}</Project>
+      <Name>NHibernate.Driver.SQLite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernate.Driver.SqlServer.Compact\NHibernate.Driver.SqlServer.Compact.csproj">
+      <Project>{11b3c504-d501-4766-ac36-0cf1a813815b}</Project>
+      <Name>NHibernate.Driver.SqlServer.Compact</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NHibernate\NHibernate.csproj">
       <Project>{5909BFE7-93CF-4E5F-BE22-6293368AF01D}</Project>
       <Name>NHibernate</Name>
@@ -3895,6 +3944,20 @@
   <ItemGroup>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.1\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.1\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.1\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.1\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

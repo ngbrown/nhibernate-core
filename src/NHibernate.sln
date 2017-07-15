@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.12
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{593DCEA7-C933-46F3-939F-D8172399AB05}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,6 +18,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.TestDatabaseSetup", "NHibernate.TestDatabaseSetup\NHibernate.TestDatabaseSetup.csproj", "{BEEC1564-6FB6-49F7-BBE5-8EBD2F0F6E8A}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NHibernate.Test.VisualBasic", "NHibernate.Test.VisualBasic\NHibernate.Test.VisualBasic.vbproj", "{7C2EF610-BCA0-4D1F-898A-DE9908E4970C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{2A64334E-8456-4426-B50A-6172C6C3FDD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.SqlClient", "NHibernate.Driver.SqlClient\NHibernate.Driver.SqlClient.csproj", "{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.AdoNet", "NHibernate.Driver.AdoNet\NHibernate.Driver.AdoNet.csproj", "{AED62C8C-4391-479E-AFD5-E41DD860D23E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.Odbc", "NHibernate.Driver.Odbc\NHibernate.Driver.Odbc.csproj", "{038DB367-4858-4747-B36C-6CC1E684684F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.OleDb", "NHibernate.Driver.OleDb\NHibernate.Driver.OleDb.csproj", "{76945E59-F64E-4EA2-893B-272D7EC234BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.SQLite", "NHibernate.Driver.SQLite\NHibernate.Driver.SQLite.csproj", "{99FE5A5C-F732-40A3-BEE6-ED5ADC393862}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.Npgsql", "NHibernate.Driver.Npgsql\NHibernate.Driver.Npgsql.csproj", "{C7C835DC-0A59-4227-9C3C-0AF0633CD68C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.Oracle.ManagedDataAccess", "NHibernate.Driver.Oracle.ManagedDataAccess\NHibernate.Driver.Oracle.ManagedDataAccess.csproj", "{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.FirebirdClient", "NHibernate.Driver.FirebirdClient\NHibernate.Driver.FirebirdClient.csproj", "{DADD54C1-3679-4672-9774-9362428EB9E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.SqlServer.Compact", "NHibernate.Driver.SqlServer.Compact\NHibernate.Driver.SqlServer.Compact.csproj", "{11B3C504-D501-4766-AC36-0CF1A813815B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.Driver.MySql", "NHibernate.Driver.MySql\NHibernate.Driver.MySql.csproj", "{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,9 +67,61 @@ Global
 		{7C2EF610-BCA0-4D1F-898A-DE9908E4970C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C2EF610-BCA0-4D1F-898A-DE9908E4970C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C2EF610-BCA0-4D1F-898A-DE9908E4970C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AED62C8C-4391-479E-AFD5-E41DD860D23E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AED62C8C-4391-479E-AFD5-E41DD860D23E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AED62C8C-4391-479E-AFD5-E41DD860D23E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AED62C8C-4391-479E-AFD5-E41DD860D23E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{038DB367-4858-4747-B36C-6CC1E684684F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{038DB367-4858-4747-B36C-6CC1E684684F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{038DB367-4858-4747-B36C-6CC1E684684F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{038DB367-4858-4747-B36C-6CC1E684684F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76945E59-F64E-4EA2-893B-272D7EC234BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76945E59-F64E-4EA2-893B-272D7EC234BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76945E59-F64E-4EA2-893B-272D7EC234BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76945E59-F64E-4EA2-893B-272D7EC234BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99FE5A5C-F732-40A3-BEE6-ED5ADC393862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99FE5A5C-F732-40A3-BEE6-ED5ADC393862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99FE5A5C-F732-40A3-BEE6-ED5ADC393862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99FE5A5C-F732-40A3-BEE6-ED5ADC393862}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C835DC-0A59-4227-9C3C-0AF0633CD68C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C835DC-0A59-4227-9C3C-0AF0633CD68C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C835DC-0A59-4227-9C3C-0AF0633CD68C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C835DC-0A59-4227-9C3C-0AF0633CD68C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22409381-1808-4F0A-9C42-9FAA6B3BCFA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DADD54C1-3679-4672-9774-9362428EB9E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DADD54C1-3679-4672-9774-9362428EB9E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DADD54C1-3679-4672-9774-9362428EB9E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DADD54C1-3679-4672-9774-9362428EB9E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11B3C504-D501-4766-AC36-0CF1A813815B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11B3C504-D501-4766-AC36-0CF1A813815B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11B3C504-D501-4766-AC36-0CF1A813815B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11B3C504-D501-4766-AC36-0CF1A813815B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CF9FEEC5-3403-4F3F-9E4F-F0BAFE95DE39} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{AED62C8C-4391-479E-AFD5-E41DD860D23E} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{038DB367-4858-4747-B36C-6CC1E684684F} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{76945E59-F64E-4EA2-893B-272D7EC234BB} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{99FE5A5C-F732-40A3-BEE6-ED5ADC393862} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{C7C835DC-0A59-4227-9C3C-0AF0633CD68C} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{22409381-1808-4F0A-9C42-9FAA6B3BCFA2} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{DADD54C1-3679-4672-9774-9362428EB9E0} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{11B3C504-D501-4766-AC36-0CF1A813815B} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = NHibernate.vsmdi

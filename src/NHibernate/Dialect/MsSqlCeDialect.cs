@@ -195,7 +195,7 @@ namespace NHibernate.Dialect
 
 		protected virtual void RegisterDefaultProperties()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SqlServerCeDriver";
+			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SqlServerCompactDriver, NHibernate.Driver.SqlServer.Compact";
 			DefaultProperties[Environment.PrepareSql] = "false";
 		}
 
