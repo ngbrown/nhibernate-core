@@ -49,6 +49,8 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 				Assert.That(result.Count, Is.EqualTo(1));
 			}
 		}
+
+#if !NETCOREAPP2_0
 		[Test]
 		public void ShouldAutoFlushWhenInDistributedTransaction()
 		{
@@ -65,5 +67,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 				Assert.That(result.Count, Is.EqualTo(1));
 			}
 		}
+#endif
 	}
 }

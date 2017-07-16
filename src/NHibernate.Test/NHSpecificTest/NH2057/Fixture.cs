@@ -10,6 +10,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2057
 	[TestFixture]
 	public class Fixture : BugTestCase
 	{
+#if !NETCOREAPP2_0
 		[Test]
 		[Description("This test fails intermittently on SQL Server ODBC. Not sure why.")]
 		public void WillCloseWhenUsingDTC()
@@ -27,5 +28,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2057
 			}
 			Assert.That(s.IsClosed, Is.True);
 		}
+#endif
 	}
 }

@@ -76,7 +76,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1632
 			Assert.IsFalse(s.IsOpen);
 		}
 
-
+#if !NETCOREAPP2_0
 		[Test]
 		public void When_commiting_items_in_DTC_transaction_will_add_items_to_2nd_level_cache()
 		{
@@ -147,6 +147,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1632
 				tx.Commit();
 			}
 		}
+#endif
 
 		[Test]
 		public void Will_not_save_when_flush_mode_is_never()
@@ -171,6 +172,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1632
 			}
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void When_using_two_sessions_with_explicit_flush()
 		{
@@ -244,5 +246,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1632
 				tx.Commit();
 			}
 		}
+#endif
 	}
 }
