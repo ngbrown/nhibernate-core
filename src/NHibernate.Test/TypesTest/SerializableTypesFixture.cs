@@ -14,6 +14,7 @@ namespace NHibernate.Test.TypesTest
 			NHAssert.InheritedAreMarkedSerializable(typeof(IType));
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void EachEmbeddedBasicTypeIsSerializable()
 		{
@@ -24,5 +25,6 @@ namespace NHibernate.Test.TypesTest
 				NHAssert.IsSerializable(ntp, fieldInfo.Name + " is not serializable");
 			}
 		}
+#endif
 	}
 }

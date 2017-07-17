@@ -18,14 +18,19 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
     <Compile Remove="NHSpecificTest\DtcFailures\**" /> <!--Distributed-->
+    <Compile Remove="NHSpecificTest\NH317\**" /> <!--Serialization-->
     <Compile Remove="NHSpecificTest\NH2188\**" /> <!--Uses AppDomain.CurrentDomain.SetupInformation-->
     <Compile Remove="NHSpecificTest\NH2420\**" /> <!--Distributed-->
     <Compile Remove="NHSpecificTest\NH2484\**" /> <!--Uses Image type-->
+    <Compile Remove="NHSpecificTest\NH2773\**" /> <!--Serialization-->
+    <Compile Remove="NHSpecificTest\NH2880\**" /> <!--Serialization-->
     <Compile Remove="NHSpecificTest\NH2985\**" /> <!--Uses Bitmap type-->
     <Compile Remove="NHSpecificTest\NH3121\**" /> <!--Uses Image type-->
+    <Compile Remove="NHSpecificTest\NH3487\**" /> <!--Serialization-->
     <Compile Remove="SqlTest\Custom\Oracle\**" /> <!--No Oracle driver-->
     <Compile Remove="CfgTest\DefaultNsAssmFixture.cs" /> <!--Uses DefineDynamicAssembly-->
     <Compile Remove="CfgTest\HbmOrderingFixture.cs" /> <!--Uses DefineDynamicAssembly-->
+    <Compile Remove="CfgTest\ConfigurationSerializationTests.cs" /> <!--Serialization-->
     <Compile Remove="DynamicProxyTests\PeVerifier.cs" /> <!--Only for dynamic assemblies-->
     <Compile Remove="DynamicProxyTests\PeVerifyFixture.cs" /> <!--Uses appDomain.DefineDynamicAssembly-->
   </ItemGroup>

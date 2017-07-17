@@ -79,6 +79,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3119
 			}
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void PocoComponentTuplizerOfDeserializedConfiguration_Instantiate_UsesReflectonOptimizer()
 		{
@@ -101,5 +102,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3119
 				StringAssert.Contains("NHibernate.Bytecode.Lightweight.ReflectionOptimizer.CreateInstance", stackTrace);
 			}
 		}
+#endif
 	}
 }

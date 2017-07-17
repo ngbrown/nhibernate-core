@@ -636,6 +636,7 @@ namespace NHibernate.Test.Legacy
 			s.Close();
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void Serialization()
 		{
@@ -726,6 +727,7 @@ namespace NHibernate.Test.Legacy
 			}
 			Assert.IsTrue(false, "serialization should have failed");
 		}
+#endif
 
 		[Test]
 		public void UpdateLazyCollections()

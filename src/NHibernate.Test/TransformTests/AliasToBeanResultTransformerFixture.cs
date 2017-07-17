@@ -242,6 +242,7 @@ namespace NHibernate.Test.TransformTests
 			}
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void Serialization()
 		{
@@ -251,6 +252,7 @@ namespace NHibernate.Test.TransformTests
 			AssertSerialization<PrivateInheritedFieldsSimpleDTO>();
 			AssertSerialization<NewPropertiesSimpleDTO>();
 		}
+#endif
 
 		private void AssertCardinalityNameAndId<T>(IResultTransformer transformer = null)
 		{

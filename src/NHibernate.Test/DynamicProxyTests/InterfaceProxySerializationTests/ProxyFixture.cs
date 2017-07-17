@@ -92,6 +92,7 @@ namespace NHibernate.Test.DynamicProxyTests.InterfaceProxySerializationTests
 			s.Close();
 		}
 
+#if !NETCOREAPP2_0
 		[Test]
 		public void ProxySerialize()
 		{
@@ -138,5 +139,6 @@ namespace NHibernate.Test.DynamicProxyTests.InterfaceProxySerializationTests
 			Assert.IsNotNull(s.Load(typeof (MyProxyImpl), 5), "should be proxy - even though it doesn't exists in db");
 			s.Close();
 		}
+#endif
 	}
 }
