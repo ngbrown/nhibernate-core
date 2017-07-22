@@ -256,12 +256,18 @@ namespace NHibernate.Test.Linq
 				session.Flush();
 
 				Assert.AreEqual(2, session.Query<AnotherEntity>().Count(e => e.Input.Trim() == "hi"));
+				Assert.AreEqual(2, session.Query<AnotherEntity>().Count(e => e.Input.TrimStart() == "hi"));
 				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.TrimEnd() == " hi"));
 
 				// Emulated trim does not support multiple trim characters, but for many databases it should work fine anyways.
 				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.Trim('h') == "e"));
 				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.TrimStart('h') == "eh"));
 				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.TrimEnd('h') == "he"));
+
+				// Check when passed as array (new overloads in .NET Core App 2.0).
+				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.Trim(new [] { 'h' }) == "e"));
+				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.TrimStart(new[] { 'h' }) == "eh"));
+				Assert.AreEqual(1, session.Query<AnotherEntity>().Count(e => e.Input.TrimEnd(new[] { 'h' }) == "he"));
 
 				// Let it rollback to get rid of temporary changes.
 			}
