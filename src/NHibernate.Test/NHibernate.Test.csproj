@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <Description>The Unit Tests for NHibernate.</Description>
+    <GenerateProgramFile>false</GenerateProgramFile>
     <!--<TargetFramework>net461</TargetFramework>-->
 
     <IsPackable>false</IsPackable>
@@ -13,6 +14,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
     <PackageReference Include="NUnit" Version="3.7.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="NUnitLite" Version="3.7.2" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.7.6" />
   </ItemGroup>
 
