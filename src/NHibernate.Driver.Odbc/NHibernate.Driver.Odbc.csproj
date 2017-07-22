@@ -8,6 +8,7 @@
     <Description>Driver for Odbc DataProvider to be used with NHibernate 5.  Always look for a native .NET DataProvider before using the Odbc DataProvider.</Description>
     <PackageTags>NHibernate; Driver; ODBC</PackageTags>
     <SignAssembly>True</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <AssemblyOriginatorKeyFile>../NHibernate.snk</AssemblyOriginatorKeyFile>
     <!--<DisableImplicitPackageTargetFallback>true</DisableImplicitPackageTargetFallback>-->
   </PropertyGroup>

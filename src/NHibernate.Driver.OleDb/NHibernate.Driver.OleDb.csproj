@@ -9,6 +9,7 @@
     <PackageTags>NHibernate; Driver; OleDb</PackageTags>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../NHibernate.snk</AssemblyOriginatorKeyFile>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <!--<DisableImplicitPackageTargetFallback>true</DisableImplicitPackageTargetFallback>-->
   </PropertyGroup>
 

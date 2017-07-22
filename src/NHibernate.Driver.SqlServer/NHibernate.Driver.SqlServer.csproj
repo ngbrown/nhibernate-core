@@ -9,6 +9,7 @@
     <PackageTags>NHibernate; Driver; SqlClient; SqlServer; SQL Server; ADO.Net; Core</PackageTags>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../NHibernate.snk</AssemblyOriginatorKeyFile>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <DisableImplicitPackageTargetFallback>true</DisableImplicitPackageTargetFallback>
   </PropertyGroup>
 

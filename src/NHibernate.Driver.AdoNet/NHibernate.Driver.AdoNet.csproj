@@ -9,6 +9,7 @@
     <PackageTags>NHibernate; Driver; ADO.Net; sqlite; db2400; db2; mysql; ifx; ingres; oracle; sybase; sqlanywhere; sql anywhere; ianywhere</PackageTags>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../NHibernate.snk</AssemblyOriginatorKeyFile>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <!--<DisableImplicitPackageTargetFallback>true</DisableImplicitPackageTargetFallback>-->
   </PropertyGroup>
 
