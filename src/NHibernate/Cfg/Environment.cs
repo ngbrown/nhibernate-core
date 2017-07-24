@@ -191,7 +191,7 @@ namespace NHibernate.Cfg
 		private static IBytecodeProvider BytecodeProviderInstance;
 		private static bool EnableReflectionOptimizer;
 
-		private static readonly IInternalLogger log = LoggerProvider.LoggerFor(typeof(Environment));
+		private static readonly IInternalLogger log;
 
 		/// <summary>
 		/// Issue warnings to user when any obsolete property names are used.
@@ -202,6 +202,8 @@ namespace NHibernate.Cfg
 
 		static Environment()
 		{
+			log = LoggerProvider.LoggerFor(typeof(Environment));
+
 			// Computing the version string is a bit expensive, so do it only if logging is enabled.
 			if (log.IsInfoEnabled)
 			{
@@ -214,7 +216,16 @@ namespace NHibernate.Cfg
 
 		private static IHibernateConfiguration LoadGlobalPropertiesFromAppConfig()
 		{
-			var configuration = ConfigurationManager.OpenExeConfiguration(Assembly.GetEntryAssembly().Location);
+			var assemblyLocation = Assembly.GetEntryAssembly()?.Location;
+			if (assemblyLocation == null) return null;
+			
+			var configuration = ConfigurationManager.OpenExeConfiguration(assemblyLocation);
+			if (configuration == null)
+			{
+				log.Info(string.Format("No configuration found at entry assembly location {0}", assemblyLocation));
+				return null;
+			}
+
 			object config = configuration.GetSection(CfgXmlHelper.CfgSectionName);
 
 			if (config == null)
