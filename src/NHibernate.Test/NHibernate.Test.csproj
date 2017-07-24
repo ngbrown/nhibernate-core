@@ -51,16 +51,22 @@
 
   <ItemGroup>
     <None Remove="**\*.hbm.xml" />
+    <None Remove="**\*.jpg" />
     <None Remove="CacheTest\EntityWithFilters.xml" />
     <None Remove="TestEnbeddedConfig.cfg.xml" />
+    <None Remove="DbScripts\*.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="**\*.hbm.xml" />
+    <EmbeddedResource Include="**\*.jpg" />
     <EmbeddedResource Include="CacheTest\EntityWithFilters.xml" />
     <EmbeddedResource Include="TestEnbeddedConfig.cfg.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="DbScripts\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
