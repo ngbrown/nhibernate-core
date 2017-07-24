@@ -113,7 +113,7 @@ namespace NHibernate.TestDatabaseSetup
 			{
 				Console.WriteLine(e);
 			}
-			FbConnection.CreateDatabase(connStr, forcedWrites:false);
+			FbConnection.CreateDatabase(connStr, pageSize:4096, forcedWrites:false, overwrite:false);
 		}
 
 		private static void SetupSqlServerCe(Cfg.Configuration cfg)
