@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHibernate.Driver.SqlServer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHibernate.Driver.MySql", "NHibernate.Driver.MySql\NHibernate.Driver.MySql.csproj", "{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHibernate.Driver.SQLite.Microsoft", "NHibernate.Driver.SQLite.Microsoft\NHibernate.Driver.SQLite.Microsoft.csproj", "{9E1DB7F5-9E99-4623-B1CC-17214B87CA42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E1DB7F5-9E99-4623-B1CC-17214B87CA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E1DB7F5-9E99-4623-B1CC-17214B87CA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E1DB7F5-9E99-4623-B1CC-17214B87CA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E1DB7F5-9E99-4623-B1CC-17214B87CA42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{DADD54C1-3679-4672-9774-9362428EB9E0} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
 		{11B3C504-D501-4766-AC36-0CF1A813815B} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
 		{4F5F0C13-F302-4CEE-B60E-A55D7C30E3F8} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
+		{9E1DB7F5-9E99-4623-B1CC-17214B87CA42} = {2A64334E-8456-4426-B50A-6172C6C3FDD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2025263-49BD-45D7-B628-8BDD471B546C}

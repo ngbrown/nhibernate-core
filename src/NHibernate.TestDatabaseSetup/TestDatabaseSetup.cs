@@ -34,6 +34,7 @@ namespace NHibernate.TestDatabaseSetup
 				{"NHibernate.Driver.OracleManagedDataClientDriver", SetupOracle},
 				{"NHibernate.Driver.OracleManagedDriver, NHibernate.Driver.Oracle.Managed", SetupOracle},
 				{"NHibernate.Driver.OdbcDriver", SetupSqlServerOdbc},
+				{"NHibernate.Driver.SQLiteMicrosoftDriver, NHibernate.Driver.SQLite.Microsoft", SetupSQLite},
 #if NETFX
 				{"NHibernate.Driver.SQLite20Driver", SetupSQLite},
 				{"NHibernate.Driver.SQLiteDriver, NHibernate.Driver.SQLite", SetupSQLite},

@@ -71,6 +71,7 @@
     <ProjectReference Include="..\NHibernate.Driver.MySql\NHibernate.Driver.MySql.csproj" />
     <ProjectReference Include="..\NHibernate.Driver.PostgreSql\NHibernate.Driver.PostgreSql.csproj" />
     <ProjectReference Include="..\NHibernate.Driver.SqlServer\NHibernate.Driver.SqlServer.csproj" />
+    <ProjectReference Include="..\NHibernate.Driver.SQLite.Microsoft\NHibernate.Driver.SQLite.Microsoft.csproj" />
     <ProjectReference Include="..\NHibernate\NHibernate.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">

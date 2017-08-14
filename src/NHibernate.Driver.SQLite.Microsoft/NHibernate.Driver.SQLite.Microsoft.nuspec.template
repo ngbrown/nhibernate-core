@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>NHibernate.Driver.SQLite.Microsoft</id>
+    <version>x.y.z</version>
+    <authors>NHibernate community, Hibernate community</authors>
+    <description>
+      Driver for SQLite (using Microsoft.Data.SQLite) to be used with NHibernate 5.
+    </description>
+    <language>en-US</language>
+    <tags>NHibernate; Driver; sqlite; ADO.Net</tags>
+    <dependencies>
+      <dependency id="NHibernate" version="[x.y.z,x.y.z)" />
+      <dependency id="Microsoft.Data.SQLite" version="2.0.0" include="Runtime,Compile,Build,Native,ContentFiles" />
+    </dependencies>
+    <projectUrl>
+      http://nhibernate.info
+    </projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/logo/NHibernate-NuGet.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/nhibernate/nhibernate-core/master/LICENSE.txt</licenseUrl>
+  </metadata>
+  <files>
+    <file src="NHibernate.Driver.SQLite.Microsoft.dll" target="lib\net461" />
+    <file src="NHibernate.Driver.SQLite.Microsoft.pdb" target="lib\net461" />
+    <file src="NHibernate.Driver.SQLite.Microsoft.xml" target="lib\net461" />
+    <file src="..\..\..\src\NHibernate.Driver.SQLite.Microsoft\**\*.cs" target="src" />
+  </files>
+</package>

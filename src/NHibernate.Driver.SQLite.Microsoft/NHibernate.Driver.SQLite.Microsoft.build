@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<project 
+    name="NHibernate.Driver.SQLite.Microsoft" 
+    default="build" 
+    xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd"
+>
+
+  <property name="nuspec.destination.filename" value="NHibernate.Driver.SQLite.Microsoft.nuspec" />
+  <property name="root.dir" value="../.." />
+  <include buildfile="${root.dir}/build-common/common-project.xml" />
+
+  <target name="nuspec" depends="common.init nuget.set-properties" description="Create nuspec for NHibernate.Driver.SQLite.Microsoft">
+    <property name="nuspec.destination.file" value="${nuget.workingdir}/${nuspec.destination.filename}" />
+    <copy file="NHibernate.Driver.SQLite.Microsoft.nuspec.template" tofile="${nuspec.destination.file}"/>
+    <xmlpoke file="${nuspec.destination.file}" xpath="/package/metadata/version" value="${project.version}" />
+    <xmlpoke file="${nuspec.destination.file}" xpath="/package/metadata/dependencies/dependency[@id='NHibernate']/@version" value="[${project.version},6)" />
+  </target>
+
+  <target name="nuget" depends="common.init common.download-nuget nuget.set-properties nuspec">
+    <!-- Prepare working dir with file needed by NHibernate.Driver.SQLite.Microsoft.nuspec -->
+    <copy file="${bin.dir}/NHibernate.Driver.SQLite.Microsoft.dll" todir="${nuget.workingdir}"/>
+    <copy file="${bin.dir}/NHibernate.Driver.SQLite.Microsoft.pdb" todir="${nuget.workingdir}"/>
+    <copy file="${bin.dir}/NHibernate.Driver.SQLite.Microsoft.xml" todir="${nuget.workingdir}"/>
+
+    <exec basedir="${tools.dir}" workingdir="${nuget.workingdir}" program="NuGet.exe">
+      <arg value="pack" />
+      <arg value="-symbols" />
+      <arg value="${nuspec.destination.filename}" />
+    </exec>
+  </target>
+
+</project>
