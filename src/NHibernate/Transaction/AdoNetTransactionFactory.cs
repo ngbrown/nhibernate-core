@@ -51,6 +51,7 @@ namespace NHibernate.Transaction
 				throw new ArgumentNullException(nameof(work));
 
 			DbConnection connection = null;
+			bool isNewConnection = false;
 			DbTransaction trans = null;
 			// bool wasAutoCommit = false;
 			try
@@ -58,9 +59,25 @@ namespace NHibernate.Transaction
 				// We make an exception for SQLite and use the session's connection,
 				// since SQLite only allows one connection to the database.
 				if (session.Factory.Dialect is SQLiteDialect)
+				{
 					connection = session.Connection;
+					if (connection.GetType().FullName == "Microsoft.Data.Sqlite.SqliteConnection")
+					{
+						connection = session.Factory.ConnectionProvider.GetConnection();
+						isNewConnection = true;
+						using (var command = connection.CreateCommand())
+						{
+							// Activated foreign keys if supported by SQLite.  Unknown pragmas are ignored.
+							command.CommandText = "PRAGMA read_uncommitted = true;";
+							command.ExecuteNonQuery();
+						}
+					}
+				}
 				else
+				{
 					connection = session.Factory.ConnectionProvider.GetConnection();
+					isNewConnection = true;
+				}
 
 				if (transacted)
 				{
@@ -136,7 +153,7 @@ namespace NHibernate.Transaction
 					isolaterLog.Warn(ignore, "Unable to dispose transaction");
 				}
 
-				if (session.Factory.Dialect is SQLiteDialect == false)
+				if (session.Factory.Dialect is SQLiteDialect == false || isNewConnection)
 					session.Factory.ConnectionProvider.CloseConnection(connection);
 			}
 		}
