@@ -88,10 +88,14 @@ namespace NHibernate
 		void Debug(string message);
 	}
 
-#pragma warning disable 618 // ITransitionalInternaLogger is obsolete, to be removed in a upcoming major version
+#pragma warning disable 618 // ITransitionalInternaLogger is obsolete, to be removed in an upcoming major version
 	/// <summary>
 	/// NHibernate internal logger interface.
 	/// </summary>
+	/// <remarks>
+	/// For implementors: only two methods are non obsolete. Use <see cref="NHibernateLoggerBase"/> as a base class
+	/// in order to avoiding having to implement all the obsolete methods.
+	/// </remarks>
 	public interface INHibernateLogger: ITransitionalInternaLogger
 #pragma warning restore 618
 	{
@@ -362,7 +366,8 @@ namespace NHibernate
 
 	/// <summary>
 	/// Base class for <see cref="INHibernateLogger"/> implementations, provides <see cref="ITransitionalInternaLogger"/>
-	/// methods.
+	/// methods. It will be dropped once the old logger interfaces are dropped too. <see cref="INHibernateLogger" />
+	/// implementors using this base class will only need to cease using a base once it gets dropped.
 	/// </summary>
 	// Since 5.1
 	[Obsolete("To be used as logger base class for implementing the obsolete interface ITransitionalInternaLogger until it gets dropped.")]
@@ -504,7 +509,7 @@ namespace NHibernate
 #pragma warning restore 618
 	}
 
-#pragma warning disable 618 // NHibernateLoggerBase is obsolete, to be removed in a upcoming major version
+#pragma warning disable 618 // NHibernateLoggerBase is obsolete, to be removed in an upcoming major version
 	/// <summary>
 	/// Logger which logs nothing.
 	/// </summary>
