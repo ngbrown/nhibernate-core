@@ -120,13 +120,15 @@ namespace NHibernate.Test.Logging
 			}
 		}
 
-		private class MockLogger2 : INHibernateLogger
+#pragma warning disable 618
+		private class MockLogger2 : NHibernateLoggerBase, INHibernateLogger
+#pragma warning restore 618
 		{
-			private bool IsErrorEnabled { get; } = true;
-			private bool IsFatalEnabled { get; } = true;
-			private bool IsDebugEnabled { get; } = false;
-			private bool IsInfoEnabled { get; } = false;
-			private bool IsWarnEnabled { get; } = true;
+			private new bool IsErrorEnabled { get; } = true;
+			private new bool IsFatalEnabled { get; } = true;
+			private new bool IsDebugEnabled { get; } = false;
+			private new bool IsInfoEnabled { get; } = false;
+			private new bool IsWarnEnabled { get; } = true;
 
 			public void Log(InternalLogLevel logLevel, InternalLogValues state, Exception exception)
 			{
