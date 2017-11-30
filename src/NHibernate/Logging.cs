@@ -365,12 +365,12 @@ namespace NHibernate
 	}
 
 	/// <summary>
+#pragma warning disable 618
 	/// Base class for <see cref="INHibernateLogger"/> implementations, provides <see cref="ITransitionalInternaLogger"/>
-	/// methods. It will be dropped once the old logger interfaces are dropped too. <see cref="INHibernateLogger" />
-	/// implementors using this base class will only need to cease using a base once it gets dropped.
+#pragma warning restore 618
+	/// methods. It will be obsoleted once the old logger interfaces are dropped. <see cref="INHibernateLogger" />
+	/// implementors using this base class will only need to cease using a base once it gets obsoleted.
 	/// </summary>
-	// Since 5.1
-	[Obsolete("To be used as logger base class for implementing the obsolete interface ITransitionalInternaLogger until it gets dropped.")]
 	public abstract class NHibernateLoggerBase
 	{
 		private readonly INHibernateLogger _this;
