@@ -76,7 +76,28 @@ namespace NHibernate
 		void WarnFormat(string format, params object[] args);
 	}
 
-	public interface INHibernateLogger
+	// Since v5.1
+	// Required till look alike methods taking object are dropped.
+	[Obsolete("Implement and use NHibernate.INHibernateLogger")]
+	public interface ITransitionalInternaLogger : IInternalLogger
+	{
+		void Fatal(string message);
+		void Error(string message);
+		void Warn(string message);
+		void Info(string message);
+		void Debug(string message);
+	}
+
+#pragma warning disable 618 // ITransitionalInternaLogger is obsolete, to be removed in an upcoming major version
+	/// <summary>
+	/// NHibernate internal logger interface.
+	/// </summary>
+	/// <remarks>
+	/// For implementors: only two methods are non obsolete. Use <see cref="NHibernateLoggerBase"/> as a base class
+	/// in order to avoiding having to implement all the obsolete methods.
+	/// </remarks>
+	public interface INHibernateLogger: ITransitionalInternaLogger
+#pragma warning restore 618
 	{
 		/// <summary>Writes a log entry.</summary>
 		/// <param name="logLevel">Entry will be written on this level.</param>
@@ -126,11 +147,10 @@ namespace NHibernate
 	/// By default, it will use a <see cref="Log4NetLoggerFactory"/> if log4net is available, otherwise it will
 	/// use a <see cref="NoLoggingLoggerFactory"/>.
 	/// </remarks>
-	public class LoggerProvider
+	public static class LoggerProvider
 	{
 		private const string nhibernateLoggerConfKey = "nhibernate-logger";
-		private readonly INHibernateLoggerFactory _loggerFactory;
-		private static LoggerProvider _instance;
+		private static INHibernateLoggerFactory _loggerFactory;
 
 		static LoggerProvider()
 		{
@@ -146,15 +166,15 @@ namespace NHibernate
 			try
 			{
 				var loadedLoggerFactory = Activator.CreateInstance(loggerFactoryType);
-#pragma warning disable 618
-				if (loadedLoggerFactory is ILoggerFactory oldStyleFactory)
+				if (loadedLoggerFactory is INHibernateLoggerFactory newStyleFactory)
 				{
-					loggerFactory = new LegacyLoggerFactoryAdaptor(oldStyleFactory);
+					loggerFactory = newStyleFactory;
 				}
-#pragma warning restore 618
 				else
 				{
-					loggerFactory = (INHibernateLoggerFactory) loadedLoggerFactory;
+#pragma warning disable 618
+					loggerFactory = new LegacyLoggerFactoryAdaptor((ILoggerFactory) loadedLoggerFactory);
+#pragma warning restore 618
 				}
 			}
 			catch (MissingMethodException ex)
@@ -202,7 +222,7 @@ namespace NHibernate
 		[Obsolete("Implement INHibernateLoggerFactory instead")]
 		public static void SetLoggersFactory(ILoggerFactory loggerFactory)
 		{
-			_instance = new LoggerProvider(new LegacyLoggerFactoryAdaptor(loggerFactory));
+			_loggerFactory = new LegacyLoggerFactoryAdaptor(loggerFactory);
 		}
 
 		/// <summary>
@@ -210,11 +230,6 @@ namespace NHibernate
 		/// </summary>
 		/// <param name="loggerFactory">A logger factory.</param>
 		public static void SetLoggersFactory(INHibernateLoggerFactory loggerFactory)
-		{
-			_instance = new LoggerProvider(loggerFactory);
-		}
-
-		private LoggerProvider(INHibernateLoggerFactory loggerFactory)
 		{
 			_loggerFactory = loggerFactory;
 		}
@@ -226,7 +241,7 @@ namespace NHibernate
 		/// <returns>A NHibernate logger.</returns>
 		public static INHibernateLogger LoggerFor(string keyName)
 		{
-			return _instance._loggerFactory.LoggerFor(keyName);
+			return _loggerFactory.LoggerFor(keyName);
 		}
 
 		/// <summary>
@@ -236,7 +251,7 @@ namespace NHibernate
 		/// <returns>A NHibernate logger.</returns>
 		public static INHibernateLogger LoggerFor(System.Type type)
 		{
-			return _instance._loggerFactory.LoggerFor(type);
+			return _loggerFactory.LoggerFor(type);
 		}
 
 		// Since 5.1
@@ -250,12 +265,12 @@ namespace NHibernate
 				_factory = factory;
 			}
 
-			public INHibernateLogger LoggerFor(string keyName)
+			INHibernateLogger INHibernateLoggerFactory.LoggerFor(string keyName)
 			{
 				return new NHibernateLoggerThunk(_factory.LoggerFor(keyName));
 			}
 
-			public INHibernateLogger LoggerFor(System.Type type)
+			INHibernateLogger INHibernateLoggerFactory.LoggerFor(System.Type type)
 			{
 				return new NHibernateLoggerThunk(_factory.LoggerFor(type));
 			}
@@ -264,7 +279,7 @@ namespace NHibernate
 
 	// Since 5.1
 	[Obsolete("Used only in Obsolete functions to thunk to INHibernateLoggerFactory")]
-	internal class NHibernateLoggerThunk : INHibernateLogger
+	internal class NHibernateLoggerThunk : NHibernateLoggerBase, INHibernateLogger
 	{
 		private readonly IInternalLogger _internalLogger;
 
@@ -349,31 +364,167 @@ namespace NHibernate
 		}
 	}
 
-	public class NoLoggingLoggerFactory: INHibernateLoggerFactory
+	/// <summary>
+	/// Base class for <see cref="INHibernateLogger"/> implementations, provides <see cref="ITransitionalInternaLogger"/>
+	/// methods. It will be dropped once the old logger interfaces are dropped too. <see cref="INHibernateLogger" />
+	/// implementors using this base class will only need to cease using a base once it gets dropped.
+	/// </summary>
+	// Since 5.1
+	[Obsolete("To be used as logger base class for implementing the obsolete interface ITransitionalInternaLogger until it gets dropped.")]
+	public abstract class NHibernateLoggerBase
 	{
-		private static readonly INHibernateLogger Nologging = new NoLoggingInternalLogger();
-		public INHibernateLogger LoggerFor(string keyName)
+		private readonly INHibernateLogger _this;
+
+		protected NHibernateLoggerBase()
 		{
-			return Nologging;
+			_this = this as INHibernateLogger ??
+				throw new InvalidOperationException("Concrete implementation must be an INHibernateLogger");
 		}
 
-		public INHibernateLogger LoggerFor(System.Type type)
-		{
-			return Nologging;
-		}
+		// Since v5.1
+		[Obsolete("Please use IsErrorEnabled() INHibernateLogger extension method instead.")]
+		public bool IsErrorEnabled => _this.IsErrorEnabled();
+		// Since v5.1
+		[Obsolete("Please use IsFatalEnabled() INHibernateLogger extension method instead.")]
+		public bool IsFatalEnabled => _this.IsFatalEnabled();
+		// Since v5.1
+		[Obsolete("Please use IsDebugEnabled() INHibernateLogger extension method instead.")]
+		public bool IsDebugEnabled => _this.IsDebugEnabled();
+		// Since v5.1
+		[Obsolete("Please use IsInfoEnabled() INHibernateLogger extension method instead.")]
+		public bool IsInfoEnabled => _this.IsInfoEnabled();
+		// Since v5.1
+		[Obsolete("Please use IsWarnEnabled() INHibernateLogger extension method instead.")]
+		public bool IsWarnEnabled => _this.IsWarnEnabled();
+
+		// Since v5.1
+		[Obsolete("Please use Error(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Error(object message) => _this.Error(message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Error(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Error(string message) => _this.Error(message, default(object[]));
+
+		// Since v5.1
+		[Obsolete("Please use Error(Exception, string, params object[]) INHibernateLogger extension method instead.")]
+		public void Error(object message, Exception exception) => _this.Error(exception, message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Error(string, params object[]) INHibernateLogger extension method instead.")]
+		public void ErrorFormat(string format, params object[] args) => _this.Error(format, args);
+
+		// Since v5.1
+		[Obsolete("Please use Fatal(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Fatal(object message) => _this.Fatal(message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Fatal(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Fatal(string message) => _this.Fatal(message, default(object[]));
+
+		// Since v5.1
+		[Obsolete("Please use Fatal(Exception, string, params object[]) INHibernateLogger extension method instead.")]
+		public void Fatal(object message, Exception exception) => _this.Fatal(exception, message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Debug(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Debug(object message) => _this.Debug(message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Debug(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Debug(string message) => _this.Debug(message, default(object[]));
+
+		// Since v5.1
+		[Obsolete("Please use Debug(Exception, string, params object[]) INHibernateLogger extension method instead.")]
+		public void Debug(object message, Exception exception) => _this.Debug(exception, message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Debug(string, params object[]) INHibernateLogger extension method instead.")]
+		public void DebugFormat(string format, params object[] args) => _this.Debug(format, args);
+
+		// Since v5.1
+		[Obsolete("Please use Info(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Info(object message) => _this.Info(message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Info(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Info(string message) => _this.Info(message, default(object[]));
+
+		// Since v5.1
+		[Obsolete("Please use Info(Exception, string, params object[]) INHibernateLogger extension method instead.")]
+		public void Info(object message, Exception exception) => _this.Info(exception, message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Info(string, params object[]) INHibernateLogger extension method instead.")]
+		public void InfoFormat(string format, params object[] args) => _this.Info(format, args);
+
+		// Since v5.1
+		[Obsolete("Please use Warn(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Warn(object message) => _this.Warn(message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Warn(string, params object[]) INHibernateLogger extension method instead.")]
+		public void Warn(string message) => _this.Warn(message, default(object[]));
+
+		// Since v5.1
+		[Obsolete("Please use Warn(Exception, string, params object[]) INHibernateLogger extension method instead.")]
+		public void Warn(object message, Exception exception) => _this.Warn(exception, message?.ToString());
+
+		// Since v5.1
+		[Obsolete("Please use Warn(string, params object[]) INHibernateLogger extension method instead.")]
+		public void WarnFormat(string format, params object[] args) => _this.Warn(format, args);
 	}
 
-	public class NoLoggingInternalLogger: INHibernateLogger
+	/// <summary>
+	/// Factory building loggers which log nothing.
+	/// </summary>
+#pragma warning disable 618 // ILoggerFactory is obsolete
+	public class NoLoggingLoggerFactory: INHibernateLoggerFactory, ILoggerFactory
+#pragma warning restore 618
 	{
+		private static readonly INHibernateLogger Nologging = new NoLoggingInternalLogger();
+		/// <inheritdoc />
+		INHibernateLogger INHibernateLoggerFactory.LoggerFor(string keyName)
+		{
+			return Nologging;
+		}
+
+		/// <inheritdoc />
+		INHibernateLogger INHibernateLoggerFactory.LoggerFor(System.Type type)
+		{
+			return Nologging;
+		}
+
+#pragma warning disable 618
+		[Obsolete("Use this as an INHibernateLoggerFactory instead.")]
+		public IInternalLogger LoggerFor(System.Type type)
+		{
+			return Nologging;
+		}
+
+		[Obsolete("Use this as an INHibernateLoggerFactory instead.")]
+		public IInternalLogger LoggerFor(string keyName)
+		{
+			return Nologging;
+		}
+#pragma warning restore 618
+	}
+
+#pragma warning disable 618 // NHibernateLoggerBase is obsolete, to be removed in an upcoming major version
+	/// <summary>
+	/// Logger which logs nothing.
+	/// </summary>
+	public class NoLoggingInternalLogger: NHibernateLoggerBase, INHibernateLogger
+#pragma warning restore 618
+	{
+		/// <inheritdoc />
 		public void Log(InternalLogLevel logLevel, InternalLogValues state, Exception exception)
 		{
 		}
 
+		/// <inheritdoc />
 		public bool IsEnabled(InternalLogLevel logLevel)
 		{
-			if (logLevel == InternalLogLevel.None) return true;
-
-			return false;
+			return logLevel == InternalLogLevel.None;
 		}
 	}
 
@@ -381,7 +532,7 @@ namespace NHibernate
 	/// <summary>
 	/// Reflection based log4net logger factory.
 	/// </summary>
-	public class Log4NetLoggerFactory: ILoggerFactory
+	public class Log4NetLoggerFactory: ILoggerFactory, INHibernateLoggerFactory
 #pragma warning restore 618
 	{
 		private static readonly System.Type LogManagerType = System.Type.GetType("log4net.LogManager, log4net");
@@ -398,15 +549,27 @@ namespace NHibernate
 		[Obsolete("Use this as an INHibernateLoggerFactory instead.")]
 		public IInternalLogger LoggerFor(string keyName)
 		{
-			return new Log4NetLogger(GetLoggerByNameDelegate(typeof(Log4NetLoggerFactory).Assembly, keyName));
+			INHibernateLoggerFactory nhFact = this;
+			return nhFact.LoggerFor(keyName);
 		}
 
 		[Obsolete("Use this as an INHibernateLoggerFactory instead.")]
 		public IInternalLogger LoggerFor(System.Type type)
 		{
-			return new Log4NetLogger(GetLoggerByTypeDelegate(type));
+			INHibernateLoggerFactory nhFact = this;
+			return nhFact.LoggerFor(type);
 		}
 #pragma warning restore 618
+
+		INHibernateLogger INHibernateLoggerFactory.LoggerFor(string keyName)
+		{
+			return new Log4NetLogger(GetLoggerByNameDelegate(typeof(Log4NetLoggerFactory).Assembly, keyName));
+		}
+
+		INHibernateLogger INHibernateLoggerFactory.LoggerFor(System.Type type)
+		{
+			return new Log4NetLogger(GetLoggerByTypeDelegate(type));
+		}
 
 		private static Func<TParameter, object> GetGetLoggerMethodCall<TParameter>()
 		{
@@ -427,11 +590,11 @@ namespace NHibernate
 		}
 	}
 
-#pragma warning disable 618 // IInternalLogger is obsolete, to be removed in a upcoming major version
+#pragma warning disable 618 // NHibernateLoggerBase is obsolete, to be removed in a upcoming major version
 	/// <summary>
 	/// Reflection based log4net logger.
 	/// </summary>
-	public class Log4NetLogger: IInternalLogger
+	public class Log4NetLogger: NHibernateLoggerBase, INHibernateLogger
 #pragma warning restore 618
 	{
 		private static readonly System.Type ILogType = System.Type.GetType("log4net.ILog, log4net");
@@ -498,114 +661,139 @@ namespace NHibernate
 			_logger = logger;
 		}
 
-		public bool IsErrorEnabled
+		/// <inheritdoc />
+		public void Log(InternalLogLevel logLevel, InternalLogValues state, Exception exception)
 		{
-			get { return IsErrorEnabledDelegate(_logger); }
+			if (!IsEnabled(logLevel))
+				return;
+
+			switch (logLevel)
+			{
+				case InternalLogLevel.Debug:
+				case InternalLogLevel.Trace:
+					if (exception != null)
+						DebugExceptionDelegate(_logger, state, exception);
+					else if (state.Args?.Length > 0)
+						DebugFormatDelegate(_logger, state.Format, state.Args);
+					else
+						DebugDelegate(_logger, state);
+					break;
+				case InternalLogLevel.Info:
+					if (exception != null)
+						InfoExceptionDelegate(_logger, state, exception);
+					else if (state.Args?.Length > 0)
+						InfoFormatDelegate(_logger, state.Format, state.Args);
+					else
+						InfoDelegate(_logger, state);
+					break;
+				case InternalLogLevel.Warn:
+					if (exception != null)
+						WarnExceptionDelegate(_logger, state, exception);
+					else if (state.Args?.Length > 0)
+						WarnFormatDelegate(_logger, state.Format, state.Args);
+					else
+						WarnDelegate(_logger, state);
+					break;
+				case InternalLogLevel.Error:
+					if (exception != null)
+						ErrorExceptionDelegate(_logger, state, exception);
+					else if (state.Args?.Length > 0)
+						ErrorFormatDelegate(_logger, state.Format, state.Args);
+					else
+						ErrorDelegate(_logger, state);
+					break;
+				case InternalLogLevel.Fatal:
+					if (exception != null)
+						FatalExceptionDelegate(_logger, state, exception);
+					else
+						FatalDelegate(_logger, state);
+					break;
+				case InternalLogLevel.None:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null);
+			}
 		}
 
-		public bool IsFatalEnabled
+		/// <inheritdoc />
+		public bool IsEnabled(InternalLogLevel logLevel)
 		{
-			get { return IsFatalEnabledDelegate(_logger); }
+			switch (logLevel)
+			{
+				case InternalLogLevel.Trace:
+				case InternalLogLevel.Debug:
+					return IsDebugEnabledDelegate(_logger);
+				case InternalLogLevel.Info:
+					return IsInfoEnabledDelegate(_logger);
+				case InternalLogLevel.Warn:
+					return IsWarnEnabledDelegate(_logger);
+				case InternalLogLevel.Error:
+					return IsErrorEnabledDelegate(_logger);
+				case InternalLogLevel.Fatal:
+					return IsFatalEnabledDelegate(_logger);
+				case InternalLogLevel.None:
+					return !IsFatalEnabledDelegate(_logger);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null);
+			}
+		}
+		
+		#region IInternalLogger re-implementations required for avoiding a breaking change
+		// If some dependent library use the old internal logger, passing to it objects while using
+		// formatters, we must then implement directly the call. The base impl would instead call
+		// ToString on the object, preventing the formatters to work.
+
+		void IInternalLogger.Fatal(object message)
+		{
+			FatalDelegate(_logger, message);
 		}
 
-		public bool IsDebugEnabled
+		void IInternalLogger.Fatal(object message, Exception exception)
 		{
-			get { return IsDebugEnabledDelegate(_logger); }
+			FatalExceptionDelegate(_logger, message, exception);
 		}
 
-		public bool IsInfoEnabled
+		void IInternalLogger.Error(object message)
 		{
-			get { return IsInfoEnabledDelegate(_logger); }
+			ErrorDelegate(_logger, message);
 		}
 
-		public bool IsWarnEnabled
+		void IInternalLogger.Error(object message, Exception exception)
 		{
-			get { return IsWarnEnabledDelegate(_logger); }
+			ErrorExceptionDelegate(_logger, message, exception);
 		}
 
-		public void Error(object message)
+		void IInternalLogger.Warn(object message)
 		{
-			if (IsErrorEnabled)
-				ErrorDelegate(_logger, message);
+			WarnDelegate(_logger, message);
 		}
 
-		public void Error(object message, Exception exception)
+		void IInternalLogger.Warn(object message, Exception exception)
 		{
-			if (IsErrorEnabled)
-				ErrorExceptionDelegate(_logger, message, exception);
+			WarnExceptionDelegate(_logger, message, exception);
 		}
 
-		public void ErrorFormat(string format, params object[] args)
+		void IInternalLogger.Info(object message)
 		{
-			if (IsErrorEnabled)
-				ErrorFormatDelegate(_logger, format, args);
+			InfoDelegate(_logger, message);
 		}
 
-		public void Fatal(object message)
+		void IInternalLogger.Info(object message, Exception exception)
 		{
-			if (IsFatalEnabled)
-				FatalDelegate(_logger, message);
+			InfoExceptionDelegate(_logger, message, exception);
 		}
 
-		public void Fatal(object message, Exception exception)
+		void IInternalLogger.Debug(object message)
 		{
-			if (IsFatalEnabled)
-				FatalExceptionDelegate(_logger, message, exception);
+			DebugDelegate(_logger, message);
 		}
 
-		public void Debug(object message)
+		void IInternalLogger.Debug(object message, Exception exception)
 		{
-			if (IsDebugEnabled)
-				DebugDelegate(_logger, message);
+			DebugExceptionDelegate(_logger, message, exception);
 		}
 
-		public void Debug(object message, Exception exception)
-		{
-			if (IsDebugEnabled)
-				DebugExceptionDelegate(_logger, message, exception);
-		}
-
-		public void DebugFormat(string format, params object[] args)
-		{
-			if (IsDebugEnabled)
-				DebugFormatDelegate(_logger, format, args);
-		}
-
-		public void Info(object message)
-		{
-			if (IsInfoEnabled)
-				InfoDelegate(_logger, message);
-		}
-
-		public void Info(object message, Exception exception)
-		{
-			if (IsInfoEnabled)
-				InfoExceptionDelegate(_logger, message, exception);
-		}
-
-		public void InfoFormat(string format, params object[] args)
-		{
-			if (IsInfoEnabled)
-				InfoFormatDelegate(_logger, format, args);
-		}
-
-		public void Warn(object message)
-		{
-			if (IsWarnEnabled)
-				WarnDelegate(_logger, message);
-		}
-
-		public void Warn(object message, Exception exception)
-		{
-			if (IsWarnEnabled)
-				WarnExceptionDelegate(_logger, message, exception);
-		}
-
-		public void WarnFormat(string format, params object[] args)
-		{
-			if (IsWarnEnabled)
-				WarnFormatDelegate(_logger, format, args);
-		}
+		#endregion
 	}
 
 	/// <summary>
@@ -668,60 +856,40 @@ namespace NHibernate
 		{
 			logger.Log(InternalLogLevel.Debug, new InternalLogValues(format, args), null);
 		}
-
-
-		// catch any method calls with an Exception argument second as they would otherwise silently be consumed by `params object[] args`.
-
-		/// <summary>
-		/// Throws NotImplementedException. Calling this method is an error. Please use methods taking the exception as first argument instead.
-		/// </summary>
-		[Obsolete("Use Fatal(Exception, string, params object[])", true)]
-		public static void Fatal(this INHibernateLogger logger, string message, Exception ex) => ThrowNotImplemented();
-
-		/// <summary>
-		/// Throws NotImplementedException. Calling this method is an error. Please use methods taking the exception as first argument instead.
-		/// </summary>
-		[Obsolete("Use Error(Exception, string, params object[])", true)]
-		public static void Error(this INHibernateLogger logger, string message, Exception ex) => ThrowNotImplemented();
-
-		/// <summary>
-		/// Throws NotImplementedException. Calling this method is an error. Please use methods taking the exception as first argument instead.
-		/// </summary>
-		[Obsolete("Use Warn(Exception, string, params object[])", true)]
-		public static void Warn(this INHibernateLogger logger, string message, Exception ex) => ThrowNotImplemented();
-
-		/// <summary>
-		/// Throws NotImplementedException. Calling this method is an error. Please use methods taking the exception as first argument instead.
-		/// </summary>
-		[Obsolete("Use Info(Exception, string, params object[])", true)]
-		public static void Info(this INHibernateLogger logger, string message, Exception ex) => ThrowNotImplemented();
-
-		/// <summary>
-		/// Throws NotImplementedException. Calling this method is an error. Please use methods taking the exception as first argument instead.
-		/// </summary>
-		[Obsolete("Use Debug(Exception, string, params object[])", true)]
-		public static void Debug(this INHibernateLogger logger, string message, Exception ex) => ThrowNotImplemented();
-
-		private static void ThrowNotImplemented()
-		{
-			throw new NotImplementedException("Should not have compiled with call to this method");
-		}
 	}
 
+	/// <summary>
+	/// Data to log.
+	/// </summary>
 	public struct InternalLogValues
 	{
 		private readonly string _format;
 		private readonly object[] _args;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <param name="format">The message, eventually having format placeholders.</param>
+		/// <param name="args">The formating arguments.</param>
 		public InternalLogValues(string format, object[] args)
 		{
 			_format = format ?? "[Null]";
 			_args = args;
 		}
 
+		/// <summary>
+		/// The message, eventually having format placeholders.
+		/// </summary>
 		public string Format => _format;
+		/// <summary>
+		/// The formating arguments.
+		/// </summary>
 		public object[] Args => _args;
 
+		/// <summary>
+		/// The string representation of the log data.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return _args?.Length > 0 ? string.Format(_format, _args) : Format;
