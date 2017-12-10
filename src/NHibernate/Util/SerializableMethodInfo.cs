@@ -36,11 +36,11 @@ namespace NHibernate.Util
 
 		private SerializableMethodInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			string methodName = info.GetString("methodName");
 			SerializableSystemType[] parameterSystemTypes = info.GetValue<SerializableSystemType[]>("parameterTypesHelper");
 
-			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetType()).ToArray() ?? new System.Type[0];
+			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetSystemType()).ToArray() ?? new System.Type[0];
 			_methodInfo = declaringType.GetMethod(
 				methodName,
 				BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, parameterTypes, null);

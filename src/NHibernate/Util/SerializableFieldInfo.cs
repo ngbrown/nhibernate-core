@@ -35,7 +35,7 @@ namespace NHibernate.Util
 
 		private SerializableFieldInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			string fieldName = info.GetString("fieldName");
 
 			_fieldInfo = declaringType.GetField(

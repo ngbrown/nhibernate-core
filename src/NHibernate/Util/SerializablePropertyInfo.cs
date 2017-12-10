@@ -35,7 +35,7 @@ namespace NHibernate.Util
 
 		private SerializablePropertyInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			string propertyName = info.GetString("propertyName");
 
 			_propertyInfo = declaringType.GetProperty(

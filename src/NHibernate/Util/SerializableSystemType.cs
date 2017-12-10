@@ -41,16 +41,16 @@ namespace NHibernate.Util
 		}
 
 		/// <summary>
-		/// Returns the type. Will throw if it was unable to load it after deserialization.
+		/// Returns the wrapped type. Will throw if it was unable to load it after deserialization.
 		/// </summary>
 		/// <returns>The type that this class was initialized with or initialized after deserialization.</returns>
-		public new System.Type GetType() => _type ?? throw new TypeLoadException("Could not load type " + _typeName + ".");
+		public System.Type GetSystemType() => _type ?? throw new TypeLoadException("Could not load type " + _typeName + ".");
 
 		/// <summary>
-		/// Returns the type. Will return null if it was unable to load it after deserialization.
+		/// Returns the wrapped type. Will return null if it was unable to load it after deserialization.
 		/// </summary>
 		/// <returns>The type that this class was initialized with, the type initialized after deserialization, or null if unable to load.</returns>
-		public System.Type TryGetType() => _type;
+		public System.Type TryGetSystemType() => _type;
 
 		public string FullName => _type?.FullName ?? _typeName.Type;
 
@@ -102,7 +102,7 @@ namespace NHibernate.Util
 
 		public static explicit operator System.Type(SerializableSystemType serializableType)
 		{
-			return serializableType?.GetType();
+			return serializableType?.GetSystemType();
 		}
 
 		public static implicit operator SerializableSystemType(System.Type type)
