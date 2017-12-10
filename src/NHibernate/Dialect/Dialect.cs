@@ -8,6 +8,7 @@ using System.Transactions;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Lock;
 using NHibernate.Dialect.Schema;
+using NHibernate.Driver;
 using NHibernate.Exceptions;
 using NHibernate.Id;
 using NHibernate.Mapping;
@@ -2392,6 +2393,15 @@ namespace NHibernate.Dialect
 			// since SQLErrorCode is extremely vendor-specific.  Specific Dialects
 			// may override to return whatever is most appropriate for that vendor.
 			return new SQLStateConverter(ViolatedConstraintNameExtracter);
+		}
+
+		internal static string GetDriverName<TFallback>(string preferredName) where TFallback : IDriver
+		{
+			if (ReflectHelper.ClassForFullNameOrNull(preferredName) == null)
+#pragma warning disable 618
+				return typeof(TFallback).FullName;
+#pragma warning restore 618
+			return preferredName;
 		}
 	}
 }

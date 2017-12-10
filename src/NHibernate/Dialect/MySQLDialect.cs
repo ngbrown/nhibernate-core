@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Text;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
+using NHibernate.Driver;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
 using NHibernate.Util;
@@ -112,7 +113,10 @@ namespace NHibernate.Dialect
 			//functions:
 			RegisterFunctions();
 
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.MySqlDriver, NHibernate.Driver.MySql";
+			DefaultProperties[Environment.ConnectionDriver] =
+#pragma warning disable 618
+				GetDriverName<MySqlDataDriver>("NHibernate.Driver.MySqlDriver, NHibernate.Driver.MySql");
+#pragma warning restore 618
 		}
 
 		#region private static readonly string[] DialectKeywords = { ... }

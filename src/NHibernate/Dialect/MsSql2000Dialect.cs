@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
+using NHibernate.Driver;
 using NHibernate.Engine;
 using NHibernate.Mapping;
 using NHibernate.SqlCommand;
@@ -68,7 +69,10 @@ namespace NHibernate.Dialect
 
 		protected virtual void RegisterDefaultProperties()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SqlServer2000Driver, NHibernate.Driver.SqlServer";
+			DefaultProperties[Environment.ConnectionDriver] =
+#pragma warning disable 618
+				GetDriverName<SqlClientDriver>("NHibernate.Driver.SqlServer2000Driver, NHibernate.Driver.SqlServer");
+#pragma warning restore 618
 			DefaultProperties[Environment.BatchSize] = "20";
 			DefaultProperties[Environment.QuerySubstitutions] = "true 1, false 0, yes 'Y', no 'N'";
 		}
