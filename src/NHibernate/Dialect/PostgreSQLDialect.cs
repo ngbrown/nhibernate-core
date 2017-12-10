@@ -3,6 +3,7 @@ using System.Data.Common;
 using NHibernate.Cfg;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
+using NHibernate.Driver;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
 
@@ -28,7 +29,10 @@ namespace NHibernate.Dialect
 	{
 		public PostgreSQLDialect()
 		{
-			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.PostgreSqlDriver, NHibernate.Driver.PostgreSql";
+			DefaultProperties[Environment.ConnectionDriver] =
+#pragma warning disable 618
+				GetDriverName<NpgsqlDriver>("NHibernate.Driver.PostgreSqlDriver, NHibernate.Driver.PostgreSql");
+#pragma warning restore 618
 
 			RegisterDateTimeTypeMappings();
 			RegisterColumnType(DbType.AnsiStringFixedLength, "char(255)");
