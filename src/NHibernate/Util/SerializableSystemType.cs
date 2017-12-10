@@ -5,12 +5,14 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableSystemType : ISerializable, IEquatable<SerializableSystemType>
+	internal class SerializableSystemType : ISerializable, IEquatable<SerializableSystemType>
 	{
 		[NonSerialized]
 		private System.Type _type;
 
 		private AssemblyQualifiedTypeName _typeName;
+
+		protected AssemblyQualifiedTypeName TypeName => _typeName;
 
 		/// <summary>
 		/// Creates a new instance of <see cref="SerializableSystemType"/> if
@@ -27,12 +29,12 @@ namespace NHibernate.Util
 		/// Creates a new <see cref="SerializableSystemType"/>
 		/// </summary>
 		/// <param name="type">The <see cref="System.Type"/> being wrapped for serialization.</param>
-		private SerializableSystemType(System.Type type)
+		protected SerializableSystemType(System.Type type)
 		{
 			_type = type ?? throw new ArgumentNullException(nameof(type));
 		}
 
-		private SerializableSystemType(SerializationInfo info, StreamingContext context)
+		protected SerializableSystemType(SerializationInfo info, StreamingContext context)
 		{
 			_typeName = info.GetValue<AssemblyQualifiedTypeName>("_typeName");
 			if (_typeName == null)
@@ -57,7 +59,7 @@ namespace NHibernate.Util
 		public string AssemblyQualifiedName => _type?.AssemblyQualifiedName ?? _typeName.ToString();
 
 		[SecurityCritical]
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			if (_typeName == null)
 			{
@@ -108,6 +110,56 @@ namespace NHibernate.Util
 		public static implicit operator SerializableSystemType(System.Type type)
 		{
 			return Wrap(type);
+		}
+	}
+
+	[Serializable]
+	internal sealed class ObjectReferenceSystemType : SerializableSystemType, IObjectReference
+	{
+		private readonly bool _throwOnDeserializationError;
+
+		/// <summary>
+		/// Creates a new instance of <see cref="SerializableSystemType"/> if
+		/// <paramref name="type"/> is not null, otherwise returns <c>null</c>.
+		/// </summary>
+		/// <param name="type">The <see cref="System.Type"/> being wrapped for serialization.</param>
+		/// <param name="throwOnDeserializationError"><see langword="true" /> for failing if unable to load the type
+		/// in <see cref="IObjectReference.GetRealObject" />, <see langword="false" /> to yield
+		/// <see langword="null" /> instead.</param>
+		/// <returns>New instance of <see cref="SerializableSystemType"/> or <c>null</c>.</returns>
+		public static ObjectReferenceSystemType Wrap(System.Type type, bool throwOnDeserializationError)
+		{
+			return type == null ? null : new ObjectReferenceSystemType(type, throwOnDeserializationError);
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="SerializableSystemType"/>
+		/// </summary>
+		/// <param name="type">The <see cref="System.Type"/> being wrapped for serialization.</param>
+		/// <param name="throwOnDeserializationError"><see langword="true" /> for failing if unable to load the type
+		/// in <see cref="IObjectReference.GetRealObject" />, <see langword="false" /> to yield 
+		/// <see langword="null" /> instead.</param>
+		private ObjectReferenceSystemType(System.Type type, bool throwOnDeserializationError) : base(type)
+		{
+			_throwOnDeserializationError = throwOnDeserializationError;
+		}
+
+		private ObjectReferenceSystemType(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			_throwOnDeserializationError = info.GetBoolean("_throwOnDeserializationError");
+		}
+
+		[SecurityCritical]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("_throwOnDeserializationError", _throwOnDeserializationError);
+		}
+
+		[SecurityCritical]
+		object IObjectReference.GetRealObject(StreamingContext context)
+		{
+			return TypeName.TypeFromAssembly(_throwOnDeserializationError);
 		}
 	}
 }
