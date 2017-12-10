@@ -16,18 +16,19 @@ namespace NHibernate.Proxy.Poco
 
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
-		internal System.Type persistentClass;
-		// Since 5.1
-		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal MethodInfo getIdentifierMethod;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal MethodInfo setIdentifierMethod;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal bool overridesEquals;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal IAbstractComponentType componentIdType;
 
 		private readonly SerializableSystemType _persistentClass;
@@ -48,7 +49,6 @@ namespace NHibernate.Proxy.Poco
 			this._overridesEquals = overridesEquals;
 
 #pragma warning disable 618
-			this.persistentClass = persistentClass;
 			this.getIdentifierMethod = getIdentifierMethod;
 			this.setIdentifierMethod = setIdentifierMethod;
 			this.componentIdType = componentIdType;
