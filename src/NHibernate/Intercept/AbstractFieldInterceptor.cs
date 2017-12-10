@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using NHibernate.Engine;
 using NHibernate.Proxy;
 using NHibernate.Util;
@@ -17,7 +18,9 @@ namespace NHibernate.Intercept
 		private readonly ISet<string> unwrapProxyFieldNames;
 		private readonly HashSet<string> loadedUnwrapProxyFieldNames = new HashSet<string>();
 		private readonly string entityName;
-		private readonly SerializableSystemType mappedClass;
+		[NonSerialized]
+		private System.Type mappedClass;
+		private SerializableSystemType _serializableMappedClass;
 
 		[NonSerialized]
 		private bool initializing;
@@ -30,6 +33,18 @@ namespace NHibernate.Intercept
 			this.unwrapProxyFieldNames = unwrapProxyFieldNames ?? new HashSet<string>();
 			this.entityName = entityName;
 			this.mappedClass = mappedClass;
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableMappedClass = mappedClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			mappedClass = _serializableMappedClass?.GetSystemType();
 		}
 
 		#region IFieldInterceptor Members
@@ -72,7 +87,7 @@ namespace NHibernate.Intercept
 
 		public System.Type MappedClass
 		{
-			get { return (System.Type)mappedClass; }
+			get { return mappedClass; }
 		}
 
 		#endregion

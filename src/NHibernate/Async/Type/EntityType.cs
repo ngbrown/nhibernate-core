@@ -18,6 +18,7 @@ using NHibernate.Persister.Entity;
 using NHibernate.Proxy;
 using NHibernate.Util;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace NHibernate.Type
 {

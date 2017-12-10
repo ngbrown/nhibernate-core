@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using NHibernate.Engine;
 using NHibernate.Util;
 
@@ -154,8 +155,10 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class FieldGetter : IGetter, IOptimizableGetter
 		{
-			private readonly SerializableFieldInfo _field;
-			private readonly SerializableSystemType _clazz;
+			private FieldInfo _field;
+			private SerializableFieldInfo _serializableField;
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
 			private readonly string _name;
 
 			/// <summary>
@@ -166,10 +169,23 @@ namespace NHibernate.Properties
 			/// <param name="name">The name of the Field.</param>
 			public FieldGetter(FieldInfo field, System.Type clazz, string name)
 			{
-				if (field == null) throw new ArgumentNullException(nameof(field));
-				_field = SerializableFieldInfo.Wrap(field);
+				_field = field ?? throw new ArgumentNullException(nameof(field));
 				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
 				_name = name;
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+				_serializableField = SerializableFieldInfo.Wrap(_field);
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
+				_field = _serializableField;
 			}
 
 			#region IGetter Members
@@ -185,11 +201,11 @@ namespace NHibernate.Properties
 			{
 				try
 				{
-					return _field.Value.GetValue(target);
+					return _field.GetValue(target);
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not get a field value by reflection", false, _clazz.GetSystemType(), _name);
+					throw new PropertyAccessException(e, "could not get a field value by reflection", false, _clazz, _name);
 				}
 			}
 
@@ -197,7 +213,7 @@ namespace NHibernate.Properties
 			/// Gets the <see cref="System.Type"/> that the Field returns.
 			/// </summary>
 			/// <value>The <see cref="System.Type"/> that the Field returns.</value>
-			public System.Type ReturnType => _field.Value.FieldType;
+			public System.Type ReturnType => _field.FieldType;
 
 			/// <summary>
 			/// Gets the name of the Property.
@@ -230,8 +246,10 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class FieldSetter : ISetter, IOptimizableSetter
 		{
-			private readonly SerializableFieldInfo _field;
-			private readonly SerializableSystemType _clazz;
+			private FieldInfo _field;
+			private SerializableFieldInfo _serializableField;
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
 			private readonly string _name;
 
 			/// <summary>
@@ -242,10 +260,23 @@ namespace NHibernate.Properties
 			/// <param name="name">The name of the Field.</param>
 			public FieldSetter(FieldInfo field, System.Type clazz, string name)
 			{
-				if (field == null) throw new ArgumentNullException(nameof(field));
-				_field = SerializableFieldInfo.Wrap(field);
+				_field = field ?? throw new ArgumentNullException(nameof(field));
 				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
 				_name = name;
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+				_serializableField = SerializableFieldInfo.Wrap(_field);
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
+				_field = _serializableField;
 			}
 
 			#region ISetter Members
@@ -262,30 +293,30 @@ namespace NHibernate.Properties
 			{
 				try
 				{
-					_field.Value.SetValue(target, value);
+					_field.SetValue(target, value);
 				}
 				catch (ArgumentException ae)
 				{
 					// if I'm reading the msdn docs correctly this is the only reason the ArgumentException
 					// would be thrown, but it doesn't hurt to make sure.
-					if (_field.Value.FieldType.IsInstanceOfType(value) == false)
+					if (_field.FieldType.IsInstanceOfType(value) == false)
 					{
 						// add some details to the error message - there have been a few forum posts an they are 
 						// all related to an ISet and IDictionary mixups.
-						string msg =
-							String.Format("The type {0} can not be assigned to a field of type {1}", value.GetType(),
-														_field.Value.FieldType);
-						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetSystemType(), _name);
+						var msg = string.Format(
+							"The type {0} can not be assigned to a field of type {1}", value.GetType(),
+							_field.FieldType);
+						throw new PropertyAccessException(ae, msg, true, _clazz, _name);
 					}
 					else
 					{
-						throw new PropertyAccessException(ae, "ArgumentException while setting the field value by reflection", true, _clazz.TryGetSystemType(),
-																							_name);
+						throw new PropertyAccessException(
+							ae, "ArgumentException while setting the field value by reflection", true, _clazz, _name);
 					}
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not set a field value by reflection", true, _clazz.TryGetSystemType(), _name);
+					throw new PropertyAccessException(e, "could not set a field value by reflection", true, _clazz, _name);
 				}
 			}
 
@@ -301,7 +332,7 @@ namespace NHibernate.Properties
 			/// <value><see langword="null" /> since this is a Field - not a Property.</value>
 			public MethodInfo Method => null;
 
-			public System.Type Type => _field.Value.FieldType;
+			public System.Type Type => _field.FieldType;
 
 			#endregion
 

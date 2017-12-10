@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Runtime.Serialization;
 using NHibernate.Collection;
 using NHibernate.Engine;
 using NHibernate.Persister.Collection;
@@ -16,8 +17,12 @@ namespace NHibernate.Type
 	[Serializable]
 	public partial class ArrayType : CollectionType
 	{
-		private readonly SerializableSystemType _elementClass;
-		private readonly SerializableSystemType _arrayClass;
+		[NonSerialized]
+		private System.Type _elementClass;
+		private SerializableSystemType _serializableElementClass;
+		[NonSerialized]
+		private System.Type _arrayClass;
+		private SerializableSystemType _serializableArrayClass;
 
 		/// <summary>
 		/// Initializes a new instance of a <see cref="ArrayType"/> class for
@@ -34,14 +39,28 @@ namespace NHibernate.Type
 		public ArrayType(string role, string propertyRef, System.Type elementClass)
 			: base(role, propertyRef)
 		{
-			this._elementClass = elementClass;
+			_elementClass = elementClass;
 			_arrayClass = Array.CreateInstance(elementClass, 0).GetType();
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableElementClass = _elementClass;
+			_serializableArrayClass = _arrayClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_elementClass = _serializableElementClass?.GetSystemType();
+			_arrayClass = _serializableArrayClass?.GetSystemType();
 		}
 
 		/// <summary>
 		/// The <see cref="System.Array"/> for the element.
 		/// </summary>
-		public override System.Type ReturnedClass => _arrayClass?.GetSystemType();
+		public override System.Type ReturnedClass => _arrayClass;
 
 		public override IPersistentCollection Instantiate(ISessionImplementor session, ICollectionPersister persister, object key)
 		{
@@ -86,7 +105,7 @@ namespace NHibernate.Type
 
 		public override object InstantiateResult(object original)
 		{
-			return Array.CreateInstance(_elementClass.GetSystemType(), ((Array) original).Length);
+			return Array.CreateInstance(_elementClass, ((Array) original).Length);
 		}
 
 		public override object Instantiate(int anticipatedSize)

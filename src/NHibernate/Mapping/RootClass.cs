@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Runtime.Serialization;
 using NHibernate.Engine;
 using NHibernate.Util;
 
@@ -40,12 +40,26 @@ namespace NHibernate.Mapping
 		private bool mutable;
 		private bool embeddedIdentifier = false;
 		private bool explicitPolymorphism;
-		private SerializableSystemType entityPersisterClass;
+		[NonSerialized]
+		private System.Type entityPersisterClass;
+		private SerializableSystemType _serializableEntityPersisterClass;
 		private bool forceDiscriminator;
 		private string where;
 		private Table table;
 		private bool discriminatorInsertable = true;
 		private int nextSubclassId = 0;
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableEntityPersisterClass = entityPersisterClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			entityPersisterClass = _serializableEntityPersisterClass?.GetSystemType();
+		}
 
 		public override int SubclassId
 		{
@@ -108,7 +122,7 @@ namespace NHibernate.Mapping
 
 		public override System.Type EntityPersisterClass
 		{
-			get { return (System.Type)entityPersisterClass; }
+			get { return entityPersisterClass; }
 			set { entityPersisterClass = value; }
 		}
 

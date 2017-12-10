@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.Serialization;
 using NHibernate.Engine;
 using NHibernate.Util;
 
@@ -28,11 +29,25 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class EmbeddedGetter : IGetter
 		{
-			private readonly SerializableSystemType _clazz;
+			[NonSerialized]
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
 
 			internal EmbeddedGetter(System.Type clazz)
 			{
-				this._clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
+				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
 			}
 
 			#region IGetter Members
@@ -42,7 +57,7 @@ namespace NHibernate.Properties
 				return target;
 			}
 
-			public System.Type ReturnType => _clazz?.GetSystemType();
+			public System.Type ReturnType => _clazz;
 
 			public string PropertyName => null;
 
@@ -64,11 +79,25 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class EmbeddedSetter : ISetter
 		{
-			private readonly System.Type _clazz;
+			[NonSerialized]
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
 
 			internal EmbeddedSetter(System.Type clazz)
 			{
-				this._clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
+				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
 			}
 
 			#region ISetter Members

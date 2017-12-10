@@ -11,7 +11,8 @@ namespace NHibernate
 	[Serializable]
 	public class PropertyAccessException : HibernateException, ISerializable
 	{
-		private readonly SerializableSystemType _persistentType;
+		[NonSerialized]
+		private readonly System.Type _persistentType;
 		private readonly string _propertyName;
 		private readonly bool _wasSetter;
 
@@ -46,7 +47,7 @@ namespace NHibernate
 		/// <summary>
 		/// Gets the <see cref="System.Type"/> that NHibernate was trying find the Property or Field in.
 		/// </summary>
-		public System.Type PersistentType => _persistentType?.TryGetSystemType();
+		public System.Type PersistentType => _persistentType;
 
 		/// <summary>
 		/// Gets a message that describes the current <see cref="PropertyAccessException"/>.
@@ -82,20 +83,7 @@ namespace NHibernate
 		{
 			_propertyName = info.GetString("propertyName");
 			_wasSetter = info.GetBoolean("wasSetter");
-
-			foreach (SerializationEntry entry in info)
-			{
-				switch (entry.Name)
-				{
-					// TODO 6.0: remove "persistentType" deserialization
-					case "persistentType":
-						_persistentType = (System.Type) entry.Value;
-						break;
-					case "_persistentType":
-						_persistentType = (SerializableSystemType) entry.Value;
-						break;
-				}
-			}
+			_persistentType = info.GetValue<System.Type>("persistentType");
 		}
 
 		/// <summary>
@@ -113,7 +101,7 @@ namespace NHibernate
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
-			info.AddValue("_persistentType", _persistentType);
+			info.AddValue("persistentType", ObjectReferenceSystemType.Wrap(_persistentType, true));
 			info.AddValue("propertyName", _propertyName);
 			info.AddValue("wasSetter", _wasSetter);
 		}

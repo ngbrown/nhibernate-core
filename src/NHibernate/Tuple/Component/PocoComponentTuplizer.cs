@@ -12,18 +12,26 @@ namespace NHibernate.Tuple.Component
 	/// A <see cref="IComponentTuplizer"/> specific to the POCO entity mode. 
 	/// </summary>
 	[Serializable]
-	public class PocoComponentTuplizer : AbstractComponentTuplizer
+	public class PocoComponentTuplizer : AbstractComponentTuplizer, IDeserializationCallback
 	{
-		private readonly SerializableSystemType _componentClass;
+		[NonSerialized]
+		private System.Type _componentClass;
+		private SerializableSystemType _serializableComponentClass;
 		private readonly ISetter _parentSetter;
 		private readonly IGetter _parentGetter;
 
 		[NonSerialized]
 		private IReflectionOptimizer _optimizer;
 
-		[OnDeserialized]
-		internal void OnDeserialized(StreamingContext context)
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
 		{
+			_serializableComponentClass = _componentClass;
+		}
+
+		void IDeserializationCallback.OnDeserialization(object sender)
+		{
+			_componentClass = _serializableComponentClass?.GetSystemType();
 			SetReflectionOptimizer();
 
 			if (_optimizer != null)
@@ -49,8 +57,8 @@ namespace NHibernate.Tuple.Component
 			}
 			else
 			{
-				_parentSetter = parentProperty.GetSetter(_componentClass.GetSystemType());
-				_parentGetter = parentProperty.GetGetter(_componentClass.GetSystemType());
+				_parentSetter = parentProperty.GetSetter(_componentClass);
+				_parentGetter = parentProperty.GetGetter(_componentClass);
 			}
 
 			SetReflectionOptimizer();
@@ -61,7 +69,7 @@ namespace NHibernate.Tuple.Component
 			ClearOptimizerWhenUsingCustomAccessors();
 		}
 
-		public override System.Type MappedClass => _componentClass?.GetSystemType();
+		public override System.Type MappedClass => _componentClass;
 
 		public override object[] GetPropertyValues(object component)
 		{
@@ -140,7 +148,7 @@ namespace NHibernate.Tuple.Component
 		{
 			if (Cfg.Environment.UseReflectionOptimizer)
 			{
-				_optimizer = Cfg.Environment.BytecodeProvider.GetReflectionOptimizer(_componentClass.GetSystemType(), getters, setters);
+				_optimizer = Cfg.Environment.BytecodeProvider.GetReflectionOptimizer(_componentClass, getters, setters);
 			}
 		}
 
