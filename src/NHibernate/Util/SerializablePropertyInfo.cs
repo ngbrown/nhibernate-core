@@ -6,7 +6,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializablePropertyInfo : ISerializable, ISerializableMemberInfo, IEquatable<SerializablePropertyInfo>
+	internal sealed class SerializablePropertyInfo : ISerializable, IEquatable<SerializablePropertyInfo>
 	{
 		[NonSerialized]
 		private readonly PropertyInfo _propertyInfo;
@@ -53,8 +53,6 @@ namespace NHibernate.Util
 		}
 
 		public PropertyInfo Value => _propertyInfo;
-
-		MemberInfo ISerializableMemberInfo.Value => Value;
 
 		public bool Equals(SerializablePropertyInfo other)
 		{

@@ -7,7 +7,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableMethodInfo : ISerializable, ISerializableMemberInfo, IEquatable<SerializableMethodInfo>
+	internal sealed class SerializableMethodInfo : ISerializable, IEquatable<SerializableMethodInfo>
 	{
 		[NonSerialized]
 		private readonly MethodInfo _methodInfo;
@@ -62,8 +62,6 @@ namespace NHibernate.Util
 		}
 
 		public MethodInfo Value => _methodInfo;
-
-		MemberInfo ISerializableMemberInfo.Value => Value;
 
 		public bool Equals(SerializableMethodInfo other)
 		{
