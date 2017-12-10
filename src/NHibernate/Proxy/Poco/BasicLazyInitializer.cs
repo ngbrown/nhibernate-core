@@ -16,23 +16,30 @@ namespace NHibernate.Proxy.Poco
 
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
-		internal System.Type persistentClass;
-		// Since 5.1
-		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal MethodInfo getIdentifierMethod;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal MethodInfo setIdentifierMethod;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal bool overridesEquals;
 		// Since 5.1
 		[Obsolete("This field has no inherited usages in NHibernate and will be removed.")]
+		[NonSerialized]
 		protected internal IAbstractComponentType componentIdType;
 
-		private readonly SerializableSystemType _persistentClass;
-		private readonly SerializableMethodInfo _getIdentifierMethod;
-		private readonly SerializableMethodInfo _setIdentifierMethod;
+		[NonSerialized]
+		private System.Type _persistentClass;
+		private SerializableSystemType _serializablePersistentClass;
+		[NonSerialized]
+		private MethodInfo _getIdentifierMethod;
+		private SerializableMethodInfo _serializableGetIdentifierMethod;
+		[NonSerialized]
+		private MethodInfo _setIdentifierMethod;
+		private SerializableMethodInfo _serializableSetIdentifierMethod;
 		private readonly bool _overridesEquals;
 		private readonly IAbstractComponentType _componentIdType;
 
@@ -41,19 +48,34 @@ namespace NHibernate.Proxy.Poco
 			IAbstractComponentType componentIdType, ISessionImplementor session, bool overridesEquals)
 			: base(entityName, id, session)
 		{
-			this._persistentClass = SerializableSystemType.Wrap(persistentClass);
-			this._getIdentifierMethod = SerializableMethodInfo.Wrap(getIdentifierMethod);
-			this._setIdentifierMethod = SerializableMethodInfo.Wrap(setIdentifierMethod);
-			this._componentIdType = componentIdType;
-			this._overridesEquals = overridesEquals;
+			_persistentClass = persistentClass;
+			_getIdentifierMethod = getIdentifierMethod;
+			_setIdentifierMethod = setIdentifierMethod;
+			_componentIdType = componentIdType;
+			_overridesEquals = overridesEquals;
 
 #pragma warning disable 618
-			this.persistentClass = persistentClass;
 			this.getIdentifierMethod = getIdentifierMethod;
 			this.setIdentifierMethod = setIdentifierMethod;
 			this.componentIdType = componentIdType;
 			this.overridesEquals = overridesEquals;
 #pragma warning restore 618
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializablePersistentClass = _persistentClass;
+			_serializableGetIdentifierMethod = SerializableMethodInfo.Wrap(_getIdentifierMethod);
+			_serializableSetIdentifierMethod = SerializableMethodInfo.Wrap(_setIdentifierMethod);
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_persistentClass = _serializablePersistentClass?.GetSystemType();
+			_getIdentifierMethod = _serializableGetIdentifierMethod;
+			_setIdentifierMethod = _serializableSetIdentifierMethod;
 		}
 
 		/// <summary>
@@ -71,7 +93,7 @@ namespace NHibernate.Proxy.Poco
 
 		public override System.Type PersistentClass
 		{
-			get { return _persistentClass.GetType(); }
+			get { return _persistentClass; }
 		}
 
 		/// <summary>
@@ -116,7 +138,7 @@ namespace NHibernate.Proxy.Poco
 				{
 					return IdentityEqualityComparer.Equals(args[0], proxy);
 				}
-				else if (_setIdentifierMethod != null && method.Equals(_setIdentifierMethod?.Value))
+				else if (_setIdentifierMethod != null && method.Equals(_setIdentifierMethod))
 				{
 					Initialize();
 					Identifier = args[0];
@@ -167,8 +189,8 @@ namespace NHibernate.Proxy.Poco
 				// passed in MethodBase object is not equal to the getIdentifierMethod instance that we
 				// have... but if their names and return types are identical, then it is the correct 
 				// identifier method
-				return method.Name.Equals(_getIdentifierMethod.Value.Name) 
-					&& method.ReturnType.Equals(_getIdentifierMethod.Value.ReturnType);
+				return method.Name.Equals(_getIdentifierMethod.Name)
+					&& method.ReturnType.Equals(_getIdentifierMethod.ReturnType);
 			}
 
 			return false;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.Serialization;
 using NHibernate.Util;
 
 namespace NHibernate.Transform
@@ -8,24 +9,38 @@ namespace NHibernate.Transform
 	[Serializable]
 	public class AliasToBeanConstructorResultTransformer : IResultTransformer
 	{
-		private readonly SerializableConstructorInfo _constructor;
+		[NonSerialized]
+		private ConstructorInfo _constructor;
+		private SerializableConstructorInfo _serializableConstructor;
 
 		public AliasToBeanConstructorResultTransformer(ConstructorInfo constructor)
 		{
 			if (constructor == null) throw new ArgumentNullException(nameof(constructor));
-			this._constructor = SerializableConstructorInfo.Wrap(constructor);
+			_constructor = SerializableConstructorInfo.Wrap(constructor);
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableConstructor = SerializableConstructorInfo.Wrap(_constructor);
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_constructor = _serializableConstructor;
 		}
 
 		public object TransformTuple(object[] tuple, string[] aliases)
 		{
 			try
 			{
-				return _constructor.Value.Invoke(tuple);
+				return _constructor.Invoke(tuple);
 			}
 			catch (Exception e)
 			{
 				throw new QueryException(
-					string.Format("could not instantiate: {0}", _constructor.Value.DeclaringType?.FullName),
+					$"could not instantiate: {_constructor.DeclaringType.FullName}",
 					e);
 			}
 		}

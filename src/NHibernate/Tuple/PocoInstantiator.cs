@@ -15,11 +15,14 @@ namespace NHibernate.Tuple
 	{
 		private static readonly INHibernateLogger log = NHibernateLogger.For(typeof(PocoInstantiator));
 
-		private readonly SerializableSystemType _mappedClass;
+		[NonSerialized]
+		private System.Type _mappedClass;
+		private SerializableSystemType _serializableMappedClass;
 
 		[NonSerialized]
 		private IInstantiationOptimizer _optimizer;
 
+		[NonSerialized]
 		private readonly IProxyFactory _proxyFactory;
 
 		private readonly bool _generateFieldInterceptionProxy;
@@ -45,7 +48,7 @@ namespace NHibernate.Tuple
 
 			try
 			{
-				_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass.GetType());
+				_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass);
 			}
 			catch (PropertyNotFoundException)
 			{
@@ -65,7 +68,7 @@ namespace NHibernate.Tuple
 
 			try
 			{
-				_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass.GetType());
+				_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass);
 			}
 			catch (PropertyNotFoundException)
 			{
@@ -78,15 +81,15 @@ namespace NHibernate.Tuple
 
 		public object Instantiate(object id)
 		{
-			bool useEmbeddedIdentifierInstanceAsEntity = _embeddedIdentifier && id != null && id.GetType().Equals(_mappedClass.GetType());
+			bool useEmbeddedIdentifierInstanceAsEntity = _embeddedIdentifier && id != null && id.GetType().Equals(_mappedClass);
 			return useEmbeddedIdentifierInstanceAsEntity ? id : Instantiate();
 		}
 
 		public object Instantiate()
 		{
-			if (ReflectHelper.IsAbstractClass(_mappedClass.GetType()))
+			if (ReflectHelper.IsAbstractClass(_mappedClass))
 			{
-				throw new InstantiationException("Cannot instantiate abstract class or interface: ", _mappedClass.TryGetType());
+				throw new InstantiationException("Cannot instantiate abstract class or interface: ", _mappedClass);
 			}
 			if (_generateFieldInterceptionProxy)
 			{
@@ -101,13 +104,13 @@ namespace NHibernate.Tuple
 			{
 				return _optimizer.CreateInstance();
 			}
-			if (_mappedClass.GetType().IsValueType)
+			if (_mappedClass.IsValueType)
 			{
-				return Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_mappedClass.GetType(), true);
+				return Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_mappedClass, true);
 			}
 			if (_constructor == null)
 			{
-				throw new InstantiationException("No default constructor for entity: ", _mappedClass.TryGetType());
+				throw new InstantiationException("No default constructor for entity: ", _mappedClass);
 			}
 			try
 			{
@@ -115,16 +118,22 @@ namespace NHibernate.Tuple
 			}
 			catch (Exception e)
 			{
-				throw new InstantiationException("Could not instantiate entity: ", e, _mappedClass.TryGetType());
+				throw new InstantiationException("Could not instantiate entity: ", e, _mappedClass);
 			}
 		}
 
 		public bool IsInstance(object obj)
 		{
-			return _mappedClass.GetType().IsInstanceOfType(obj) || (_proxyInterface != null && _proxyInterface.GetType().IsInstanceOfType(obj)); //this one needed only for guessEntityMode()
+			return _mappedClass.IsInstanceOfType(obj) || (_proxyInterface != null && _proxyInterface.GetSystemType().IsInstanceOfType(obj)); //this one needed only for guessEntityMode()
 		}
 
 		#endregion
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableMappedClass = _mappedClass;
+		}
 
 		#region IDeserializationCallback Members
 
@@ -135,7 +144,8 @@ namespace NHibernate.Tuple
 				throw new InvalidOperationException("IProxyFactory implementors are currently not serializable.");
 			}
 
-			_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass.GetType());
+			_mappedClass = _serializableMappedClass?.GetSystemType();
+			_constructor = ReflectHelper.GetDefaultConstructor(_mappedClass);
 		}
 
 		#endregion

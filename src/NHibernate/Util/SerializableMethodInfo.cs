@@ -7,7 +7,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableMethodInfo : ISerializable, ISerializableMemberInfo
+	internal sealed class SerializableMethodInfo : ISerializable, IEquatable<SerializableMethodInfo>
 	{
 		[NonSerialized]
 		private readonly MethodInfo _methodInfo;
@@ -36,11 +36,11 @@ namespace NHibernate.Util
 
 		private SerializableMethodInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			string methodName = info.GetString("methodName");
 			SerializableSystemType[] parameterSystemTypes = info.GetValue<SerializableSystemType[]>("parameterTypesHelper");
 
-			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetType()).ToArray() ?? new System.Type[0];
+			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetSystemType()).ToArray() ?? new System.Type[0];
 			_methodInfo = declaringType.GetMethod(
 				methodName,
 				BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, parameterTypes, null);
@@ -63,11 +63,9 @@ namespace NHibernate.Util
 
 		public MethodInfo Value => _methodInfo;
 
-		MemberInfo ISerializableMemberInfo.Value => Value;
-
-		private bool Equals(SerializableMethodInfo other)
+		public bool Equals(SerializableMethodInfo other)
 		{
-			return Equals(_methodInfo, other._methodInfo);
+			return other != null && Equals(_methodInfo, other._methodInfo);
 		}
 
 		public override bool Equals(object obj)

@@ -15,7 +15,8 @@ namespace NHibernate
 	public class UnresolvableObjectException : HibernateException
 	{
 		private readonly object _identifier;
-		private readonly SerializableSystemType _clazz;
+		[NonSerialized]
+		private readonly System.Type _clazz;
 		private readonly string _entityName;
 
 		/// <summary>
@@ -55,7 +56,7 @@ namespace NHibernate
 
 		public override string Message => base.Message + MessageHelper.InfoString(EntityName, _identifier);
 
-		public System.Type PersistentClass => _clazz?.TryGetType();
+		public System.Type PersistentClass => _clazz;
 
 		public string EntityName => _clazz != null ? _clazz.FullName : _entityName;
 
@@ -82,7 +83,7 @@ namespace NHibernate
 		{
 			base.GetObjectData(info, context);
 			info.AddValue("identifier", _identifier);
-			info.AddValue("_clazz", _clazz);
+			info.AddValue("clazz", ObjectReferenceSystemType.Wrap(_clazz, true));
 			info.AddValue("entityName", _entityName);
 		}
 
@@ -91,20 +92,7 @@ namespace NHibernate
 		{
 			_identifier = info.GetValue("identifier", typeof(object));
 			_entityName = info.GetString("entityName");
-
-			foreach (SerializationEntry entry in info)
-			{
-				switch (entry.Name)
-				{
-					// TODO 6.0: remove "clazz" deserialization
-					case "clazz":
-						_clazz = (System.Type) entry.Value;
-						break;
-					case "_clazz":
-						_clazz = (SerializableSystemType) entry.Value;
-						break;
-				}
-			}
+			_clazz = info.GetValue<System.Type>("clazz");
 		}
 
 		#endregion

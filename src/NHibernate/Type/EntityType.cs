@@ -8,6 +8,7 @@ using NHibernate.Persister.Entity;
 using NHibernate.Proxy;
 using NHibernate.Util;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace NHibernate.Type
 {
@@ -25,7 +26,9 @@ namespace NHibernate.Type
 		private readonly bool _eager;
 		private readonly string _associatedEntityName;
 		private readonly bool _unwrapProxy;
-		private SerializableSystemType _returnedClass;
+		[NonSerialized]
+		private System.Type _returnedClass;
+		private SerializableSystemType _serializableReturnedClass;
 
 		/// <summary> Constructs the requested entity type mapping. </summary>
 		/// <param name="entityName">The name of the associated entity. </param>
@@ -49,6 +52,18 @@ namespace NHibernate.Type
 			_uniqueKeyPropertyName = uniqueKeyPropertyName;
 			_eager = eager;
 			_unwrapProxy = unwrapProxy;
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableReturnedClass = _returnedClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_returnedClass = _serializableReturnedClass?.GetSystemType();
 		}
 
 		/// <summary> Explicitly, an entity type is an entity type </summary>
@@ -125,7 +140,7 @@ namespace NHibernate.Type
 				{
 					_returnedClass = DetermineAssociatedEntityClass();
 				}
-				return _returnedClass?.GetType();
+				return _returnedClass;
 			}
 		}
 

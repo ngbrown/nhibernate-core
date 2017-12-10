@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using NHibernate.SqlTypes;
 using NHibernate.Util;
@@ -27,17 +28,31 @@ namespace NHibernate.Type
 			_defaultValue = Enum.ToObject(enumType, 0);
 		}
 
-		private readonly object _defaultValue;
-		private readonly SerializableSystemType _enumType;
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableEnumType = _enumType;
+		}
 
-		public override System.Type ReturnedClass => _enumType?.GetType();
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_enumType = _serializableEnumType?.GetSystemType();
+		}
+
+		private readonly object _defaultValue;
+		[NonSerialized]
+		private System.Type _enumType;
+		private SerializableSystemType _serializableEnumType;
+
+		public override System.Type ReturnedClass => _enumType;
 
 
 		#region IIdentifierType Members
 
 		public object StringToObject(string xml)
 		{
-			return Enum.Parse(_enumType.GetType(), xml);
+			return Enum.Parse(_enumType, xml);
 		}
 
 		#endregion
@@ -48,7 +63,7 @@ namespace NHibernate.Type
 			return StringToObject(xml);
 		}
 
-		public override System.Type PrimitiveClass => _enumType?.GetType();
+		public override System.Type PrimitiveClass => _enumType;
 
 		public override object DefaultValue => _defaultValue;
 	}

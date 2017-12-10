@@ -29,7 +29,9 @@ namespace NHibernate.Type
 	[Serializable]
 	public partial class SerializableType : MutableType
 	{
-		private readonly SerializableSystemType _serializableClass;
+		[NonSerialized]
+		private System.Type _serializableClass;
+		private SerializableSystemType _serializableSerializableClass;
 		private readonly BinaryType _binaryType;
 
 		internal SerializableType() : this(typeof(Object))
@@ -39,13 +41,25 @@ namespace NHibernate.Type
 		internal SerializableType(System.Type serializableClass) : base(new BinarySqlType())
 		{
 			_serializableClass = serializableClass;
-			_binaryType = (BinaryType) NHibernateUtil.Binary;
+			_binaryType = NHibernateUtil.Binary;
 		}
 
 		internal SerializableType(System.Type serializableClass, BinarySqlType sqlType) : base(sqlType)
 		{
 			_serializableClass = serializableClass;
 			_binaryType = (BinaryType) TypeFactory.GetBinaryType(sqlType.Length);
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableSerializableClass = _serializableClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_serializableClass = _serializableSerializableClass?.GetSystemType();
 		}
 
 		public override void Set(DbCommand st, object value, int index, ISessionImplementor session)
@@ -71,7 +85,7 @@ namespace NHibernate.Type
 			}
 		}
 
-		public override System.Type ReturnedClass => _serializableClass?.GetType();
+		public override System.Type ReturnedClass => _serializableClass;
 
 		public override bool IsEqual(object x, object y)
 		{

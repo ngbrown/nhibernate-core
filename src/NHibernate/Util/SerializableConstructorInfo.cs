@@ -7,7 +7,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableConstructorInfo : ISerializable
+	internal sealed class SerializableConstructorInfo : ISerializable, IEquatable<SerializableConstructorInfo>
 	{
 		[NonSerialized]
 		private readonly ConstructorInfo _constructorInfo;
@@ -38,10 +38,10 @@ namespace NHibernate.Util
 
 		private SerializableConstructorInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			SerializableSystemType[] parameterSystemTypes = info.GetValue<SerializableSystemType[]>("parameterTypesHelper");
 
-			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetType()).ToArray() ?? new System.Type[0];
+			System.Type[] parameterTypes = parameterSystemTypes?.Select(x => x.GetSystemType()).ToArray() ?? new System.Type[0];
 			_constructorInfo = declaringType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, CallingConventions.Any, parameterTypes, null);
 
 			if (_constructorInfo == null) throw new MissingMethodException(declaringType.FullName, ".ctor");
@@ -61,9 +61,9 @@ namespace NHibernate.Util
 
 		public ConstructorInfo Value => _constructorInfo;
 
-		private bool Equals(SerializableConstructorInfo other)
+		public bool Equals(SerializableConstructorInfo other)
 		{
-			return Equals(_constructorInfo, other._constructorInfo);
+			return other != null && Equals(_constructorInfo, other._constructorInfo);
 		}
 
 		public override bool Equals(object obj)

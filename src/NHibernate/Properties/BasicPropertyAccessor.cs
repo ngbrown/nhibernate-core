@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using NHibernate.Engine;
 using NHibernate.Util;
 
@@ -159,8 +160,12 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class BasicGetter : IGetter, IOptimizableGetter
 		{
-			private readonly SerializableSystemType _clazz;
-			private readonly SerializablePropertyInfo _property;
+			[NonSerialized]
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
+			[NonSerialized]
+			private PropertyInfo _property;
+			private SerializablePropertyInfo _serializableProperty;
 			private readonly string _propertyName;
 
 			/// <summary>
@@ -171,10 +176,23 @@ namespace NHibernate.Properties
 			/// <param name="propertyName">The name of the Property.</param>
 			public BasicGetter(System.Type clazz, PropertyInfo property, string propertyName)
 			{
-				if (property == null) throw new ArgumentNullException(nameof(property));
 				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
-				_property = SerializablePropertyInfo.Wrap(property);
+				_property = property ?? throw new ArgumentNullException(nameof(property));
 				_propertyName = propertyName;
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+				_serializableProperty = SerializablePropertyInfo.Wrap(_property);
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
+				_property = _serializableProperty;
 			}
 
 			public PropertyInfo Property => _property;
@@ -192,11 +210,11 @@ namespace NHibernate.Properties
 			{
 				try
 				{
-					return _property.Value.GetValue(target, new object[0]);
+					return _property.GetValue(target, new object[0]);
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "Exception occurred", false, _clazz.TryGetType(), _propertyName);
+					throw new PropertyAccessException(e, "Exception occurred", false, _clazz, _propertyName);
 				}
 			}
 
@@ -204,13 +222,13 @@ namespace NHibernate.Properties
 			/// Gets the <see cref="System.Type"/> that the Property returns.
 			/// </summary>
 			/// <value>The <see cref="System.Type"/> that the Property returns.</value>
-			public System.Type ReturnType => _property.Value.PropertyType;
+			public System.Type ReturnType => _property.PropertyType;
 
 			/// <summary>
 			/// Gets the name of the Property.
 			/// </summary>
 			/// <value>The name of the Property.</value>
-			public string PropertyName => _property.Value.Name;
+			public string PropertyName => _property.Name;
 
 			/// <summary>
 			/// Gets the <see cref="PropertyInfo"/> for the Property.
@@ -218,7 +236,7 @@ namespace NHibernate.Properties
 			/// <value>
 			/// The <see cref="PropertyInfo"/> for the Property.
 			/// </value>
-			public MethodInfo Method => _property.Value.GetGetMethod(true);
+			public MethodInfo Method => _property.GetGetMethod(true);
 
 			public object GetForInsert(object owner, IDictionary mergeMap, ISessionImplementor session)
 			{
@@ -232,7 +250,7 @@ namespace NHibernate.Properties
 				MethodInfo method = Method;
 				if (method == null)
 				{
-					throw new PropertyNotFoundException(_clazz.TryGetType(), _property.Value.Name, "getter");
+					throw new PropertyNotFoundException(_clazz, _property.Name, "getter");
 				}
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}
@@ -244,8 +262,12 @@ namespace NHibernate.Properties
 		[Serializable]
 		public sealed class BasicSetter : ISetter, IOptimizableSetter
 		{
-			private readonly SerializableSystemType _clazz;
-			private readonly SerializablePropertyInfo _property;
+			[NonSerialized]
+			private System.Type _clazz;
+			private SerializableSystemType _serializableClazz;
+			[NonSerialized]
+			private PropertyInfo _property;
+			private SerializablePropertyInfo _serializableProperty;
 			private readonly string _propertyName;
 
 			/// <summary>
@@ -256,10 +278,23 @@ namespace NHibernate.Properties
 			/// <param name="propertyName">The name of the mapped Property.</param>
 			public BasicSetter(System.Type clazz, PropertyInfo property, string propertyName)
 			{
-				if (property == null) throw new ArgumentNullException(nameof(property));
 				_clazz = clazz ?? throw new ArgumentNullException(nameof(clazz));
-				_property = SerializablePropertyInfo.Wrap(property);
+				_property = property ?? throw new ArgumentNullException(nameof(property));
 				_propertyName = propertyName;
+			}
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_serializableClazz = _clazz;
+				_serializableProperty = SerializablePropertyInfo.Wrap(_property);
+			}
+
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext context)
+			{
+				_clazz = _serializableClazz?.GetSystemType();
+				_property = _serializableProperty;
 			}
 
 			public PropertyInfo Property => _property;
@@ -278,30 +313,31 @@ namespace NHibernate.Properties
 			{
 				try
 				{
-					_property.Value.SetValue(target, value, new object[0]);
+					_property.SetValue(target, value, new object[0]);
 				}
 				catch (ArgumentException ae)
 				{
 					// if I'm reading the msdn docs correctly this is the only reason the ArgumentException
 					// would be thrown, but it doesn't hurt to make sure.
-					if (_property.Value.PropertyType.IsInstanceOfType(value) == false)
+					if (_property.PropertyType.IsInstanceOfType(value) == false)
 					{
 						// add some details to the error message - there have been a few forum posts an they are 
 						// all related to an ISet and IDictionary mixups.
-						string msg =
-							String.Format("The type {0} can not be assigned to a property of type {1}", value.GetType(),
-														_property.Value.PropertyType);
-						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetType(), _propertyName);
+						var msg = string.Format(
+							"The type {0} can not be assigned to a property of type {1}", value.GetType(),
+							_property.PropertyType);
+						throw new PropertyAccessException(ae, msg, true, _clazz, _propertyName);
 					}
 					else
 					{
-						throw new PropertyAccessException(ae, "ArgumentException while setting the property value by reflection", true,
-																							_clazz.TryGetType(), _propertyName);
+						throw new PropertyAccessException(
+							ae, "ArgumentException while setting the property value by reflection", true,
+							_clazz, _propertyName);
 					}
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not set a property value by reflection", true, _clazz.TryGetType(), _propertyName);
+					throw new PropertyAccessException(e, "could not set a property value by reflection", true, _clazz, _propertyName);
 				}
 			}
 
@@ -309,15 +345,15 @@ namespace NHibernate.Properties
 			/// Gets the name of the mapped Property.
 			/// </summary>
 			/// <value>The name of the mapped Property or <see langword="null" />.</value>
-			public string PropertyName => _property.Value.Name;
+			public string PropertyName => _property.Name;
 
 			/// <summary>
 			/// Gets the <see cref="PropertyInfo"/> for the mapped Property.
 			/// </summary>
 			/// <value>The <see cref="PropertyInfo"/> for the mapped Property.</value>
-			public MethodInfo Method => _property.Value.GetSetMethod(true);
+			public MethodInfo Method => _property.GetSetMethod(true);
 
-			public System.Type Type => _property.Value.PropertyType;
+			public System.Type Type => _property.PropertyType;
 
 			#endregion
 
@@ -326,7 +362,7 @@ namespace NHibernate.Properties
 				MethodInfo method = Method;
 				if (method == null)
 				{
-					throw new PropertyNotFoundException(_clazz.TryGetType(), _property.Value.Name, "setter");
+					throw new PropertyNotFoundException(_clazz, _property.Name, "setter");
 				}
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}

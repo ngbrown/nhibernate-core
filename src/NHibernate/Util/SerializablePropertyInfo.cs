@@ -6,7 +6,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializablePropertyInfo : ISerializable, ISerializableMemberInfo
+	internal sealed class SerializablePropertyInfo : ISerializable, IEquatable<SerializablePropertyInfo>
 	{
 		[NonSerialized]
 		private readonly PropertyInfo _propertyInfo;
@@ -35,7 +35,7 @@ namespace NHibernate.Util
 
 		private SerializablePropertyInfo(SerializationInfo info, StreamingContext context)
 		{
-			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetType();
+			System.Type declaringType = info.GetValue<SerializableSystemType>("declaringType").GetSystemType();
 			string propertyName = info.GetString("propertyName");
 
 			_propertyInfo = declaringType.GetProperty(
@@ -54,11 +54,9 @@ namespace NHibernate.Util
 
 		public PropertyInfo Value => _propertyInfo;
 
-		MemberInfo ISerializableMemberInfo.Value => Value;
-
-		private bool Equals(SerializablePropertyInfo other)
+		public bool Equals(SerializablePropertyInfo other)
 		{
-			return Equals(_propertyInfo, other._propertyInfo);
+			return other != null && Equals(_propertyInfo, other._propertyInfo);
 		}
 
 		public override bool Equals(object obj)

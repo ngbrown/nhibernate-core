@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using NHibernate.Util;
 
 namespace NHibernate.Transform
@@ -35,32 +36,56 @@ namespace NHibernate.Transform
 	[Serializable]
 	public class AliasToBeanResultTransformer : AliasedTupleSubsetResultTransformer, IEquatable<AliasToBeanResultTransformer>
 	{
-		private readonly SerializableSystemType _resultClass;
-		private readonly ConstructorInfo _beanConstructor;
-		private readonly Dictionary<string, NamedMember<FieldInfo>> _fieldsByNameCaseSensitive;
-		private readonly Dictionary<string, NamedMember<FieldInfo>> _fieldsByNameCaseInsensitive;
-		private readonly Dictionary<string, NamedMember<PropertyInfo>> _propertiesByNameCaseSensitive;
-		private readonly Dictionary<string, NamedMember<PropertyInfo>> _propertiesByNameCaseInsensitive;
+		[NonSerialized]
+		private System.Type _resultClass;
+		private SerializableSystemType _serializableResultClass;
+		[NonSerialized]
+		private ConstructorInfo _beanConstructor;
+		[NonSerialized]
+		private Dictionary<string, NamedMember<FieldInfo>> _fieldsByNameCaseSensitive;
+		[NonSerialized]
+		private Dictionary<string, NamedMember<FieldInfo>> _fieldsByNameCaseInsensitive;
+		[NonSerialized]
+		private Dictionary<string, NamedMember<PropertyInfo>> _propertiesByNameCaseSensitive;
+		[NonSerialized]
+		private Dictionary<string, NamedMember<PropertyInfo>> _propertiesByNameCaseInsensitive;
 
 		public AliasToBeanResultTransformer(System.Type resultClass)
 		{
 			_resultClass = resultClass ?? throw new ArgumentNullException(nameof(resultClass));
 
+			InitializeTransformer();
+		}
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializableResultClass = _resultClass;
+		}
+
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			_resultClass = _serializableResultClass?.GetSystemType();
+			InitializeTransformer();
+		}
+
+		private void InitializeTransformer()
+		{
 			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-			_beanConstructor = resultClass.GetConstructor(bindingFlags, null, System.Type.EmptyTypes, null);
+			_beanConstructor = _resultClass.GetConstructor(bindingFlags, null, System.Type.EmptyTypes, null);
 
 			// if resultClass is a ValueType (struct), GetConstructor will return null... 
 			// in that case, we'll use Activator.CreateInstance instead of the ConstructorInfo to create instances
-			if (_beanConstructor == null && resultClass.IsClass)
+			if (_beanConstructor == null && _resultClass.IsClass)
 			{
-				throw new ArgumentException(
-					"The target class of a AliasToBeanResultTransformer need a parameter-less constructor",
-					nameof(resultClass));
+				throw new InvalidOperationException(
+					"The target class of a AliasToBeanResultTransformer need a parameter-less constructor");
 			}
 
 			var fields = new List<RankedMember<FieldInfo>>();
 			var properties = new List<RankedMember<PropertyInfo>>();
-			FetchFieldsAndProperties(resultClass, fields, properties);
+			FetchFieldsAndProperties(_resultClass, fields, properties);
 
 			_fieldsByNameCaseSensitive = GetMapByName(fields, StringComparer.Ordinal);
 			_fieldsByNameCaseInsensitive = GetMapByName(fields, StringComparer.OrdinalIgnoreCase);
@@ -83,9 +108,9 @@ namespace NHibernate.Transform
 
 			try
 			{
-				result = _resultClass.GetType().IsClass
+				result = _resultClass.IsClass
 							? _beanConstructor.Invoke(null)
-							: Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_resultClass.GetType(), true);
+							: Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_resultClass, true);
 
 				for (int i = 0; i < aliases.Length; i++)
 				{
@@ -250,7 +275,6 @@ namespace NHibernate.Transform
 			public int VisibilityRank;
 		}
 
-		[Serializable]
 		private struct NamedMember<T> where T : MemberInfo
 		{
 			public NamedMember(string name, T[] members)
@@ -260,42 +284,19 @@ namespace NHibernate.Transform
 				Name = name;
 				if (members.Length == 1)
 				{
-					_member = Wrap(members[0]);
-					_ambiguousMembers = null;
+					Member = members[0];
+					AmbiguousMembers = null;
 				}
 				else
 				{
-					_member = null;
-					_ambiguousMembers = members.Select(Wrap).ToArray();
+					Member = null;
+					AmbiguousMembers = members;
 				}
 			}
 
-			public readonly string Name;
-			private readonly ISerializableMemberInfo _member;
-			private readonly ISerializableMemberInfo[] _ambiguousMembers;
-
-			public T Member => (T)_member?.Value;
-			public T[] AmbiguousMembers => _ambiguousMembers?.Select(x => (T)x.Value).ToArray();
-
-			private static ISerializableMemberInfo Wrap(T memberInfo)
-			{
-				if (typeof(T) == typeof(PropertyInfo))
-				{
-					return SerializablePropertyInfo.Wrap((PropertyInfo) (MemberInfo) memberInfo);
-				}
-				if (typeof(T) == typeof(FieldInfo))
-				{
-					return SerializableFieldInfo.Wrap((FieldInfo) (MemberInfo) memberInfo);
-				}
-				if (typeof(T) == typeof(MethodInfo))
-				{
-					return SerializableMethodInfo.Wrap((MethodInfo) (MemberInfo) memberInfo);
-				}
-
-				throw new InvalidOperationException(
-					string.Format("Could not convert {0} from type {1} to {2}",
-					              nameof(memberInfo), typeof(T), nameof(ISerializableMemberInfo)));
-			}
+			public string Name;
+			public T Member;
+			public T[] AmbiguousMembers;
 		}
 
 		#endregion

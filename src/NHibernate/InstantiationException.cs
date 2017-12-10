@@ -11,7 +11,8 @@ namespace NHibernate
 	[Serializable]
 	public class InstantiationException : HibernateException
 	{
-		private readonly SerializableSystemType _type;
+		[NonSerialized]
+		private readonly System.Type _type;
 
 		public InstantiationException(string message, System.Type type)
 			: base(message)
@@ -38,7 +39,7 @@ namespace NHibernate
 		/// <summary>
 		/// Gets the <see cref="System.Type"/> that NHibernate was trying to instantiate.
 		/// </summary>
-		public System.Type PersistentType => _type?.TryGetType();
+		public System.Type PersistentType => _type;
 
 		/// <summary>
 		/// Gets a message that describes the current <see cref="InstantiationException"/>.
@@ -64,19 +65,7 @@ namespace NHibernate
 		/// </param>
 		protected InstantiationException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
-			foreach (SerializationEntry entry in info)
-			{
-				switch (entry.Name)
-				{
-					// TODO 6.0: remove "type" deserialization
-					case "type":
-						_type = (System.Type)entry.Value;
-						break;
-					case "_type":
-						_type = (SerializableSystemType) entry.Value;
-						break;
-				}
-			}
+			_type = info.GetValue<System.Type>("type");
 		}
 
 		/// <summary>
@@ -94,7 +83,7 @@ namespace NHibernate
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
-			info.AddValue("_type", _type);
+			info.AddValue("type", ObjectReferenceSystemType.Wrap(_type, true));
 		}
 
 		#endregion
