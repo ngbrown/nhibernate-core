@@ -8,15 +8,12 @@ namespace NHibernate.Util
 	internal sealed class SerializableSystemType : ISerializable
 	{
 		[NonSerialized]
-		private readonly System.Type _type;
-
-		[NonSerialized]
-		private readonly Lazy<System.Type> _lazyType;
+		private System.Type _type;
 
 		private AssemblyQualifiedTypeName _typeName;
 
 		/// <summary>
-		/// Creates a new instance of <see cref="SerializableSystemType"/> if 
+		/// Creates a new instance of <see cref="SerializableSystemType"/> if
 		/// <paramref name="type"/> is not null, otherwise returns <c>null</c>.
 		/// </summary>
 		/// <param name="type">The <see cref="System.Type"/> being wrapped for serialization.</param>
@@ -33,28 +30,27 @@ namespace NHibernate.Util
 		private SerializableSystemType(System.Type type)
 		{
 			_type = type ?? throw new ArgumentNullException(nameof(type));
-			_typeName = null;
-			_lazyType = null;
 		}
 
 		private SerializableSystemType(SerializationInfo info, StreamingContext context)
 		{
-			_type = null;
 			_typeName = info.GetValue<AssemblyQualifiedTypeName>("_typeName");
-			_lazyType = new Lazy<System.Type>(() => _typeName?.TypeFromAssembly(false));
+			if (_typeName == null)
+				throw new InvalidOperationException("_typeName was null after deserialization");
+			_type = _typeName.TypeFromAssembly(false);
 		}
 
 		/// <summary>
-		/// Returns the type, using reflection if necessary to load.  Will throw if unable to load.
+		/// Returns the type. Will throw if it was unable to load it after deserialization.
 		/// </summary>
 		/// <returns>The type that this class was initialized with or initialized after deserialization.</returns>
-		public new System.Type GetType() => _type ?? _lazyType.Value ?? throw new TypeLoadException("Could not load type " + _typeName + ".");
+		public new System.Type GetType() => _type ?? throw new TypeLoadException("Could not load type " + _typeName + ".");
 
 		/// <summary>
-		/// Returns the type, using reflection if necessary to load.  Will return null if unable to load.
+		/// Returns the type. Will return null if it was unable to load it after deserialization.
 		/// </summary>
 		/// <returns>The type that this class was initialized with, the type initialized after deserialization, or null if unable to load.</returns>
-		public System.Type TryGetType() => _type ?? _lazyType.Value;
+		public System.Type TryGetType() => _type;
 
 		public string FullName => _type?.FullName ?? _typeName.Type;
 
@@ -73,16 +69,16 @@ namespace NHibernate.Util
 
 		private bool Equals(SerializableSystemType other)
 		{
-			return TryGetType() == null || other.TryGetType() == null
+			return _type == null || other._type == null
 				? Equals(_typeName, other._typeName)
-				: Equals(GetType(), other.GetType());
+				: Equals(_type, other._type);
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			return obj is SerializableSystemType && Equals((SerializableSystemType) obj);
+			return obj is SerializableSystemType type && Equals(type);
 		}
 
 		public override int GetHashCode()
