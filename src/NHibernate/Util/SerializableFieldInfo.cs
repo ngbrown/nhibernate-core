@@ -6,7 +6,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableFieldInfo : ISerializable, ISerializableMemberInfo
+	internal sealed class SerializableFieldInfo : ISerializable, ISerializableMemberInfo, IEquatable<SerializableFieldInfo>
 	{
 		[NonSerialized]
 		private readonly FieldInfo _fieldInfo;
@@ -56,9 +56,9 @@ namespace NHibernate.Util
 
 		MemberInfo ISerializableMemberInfo.Value => Value;
 
-		private bool Equals(SerializableFieldInfo other)
+		public bool Equals(SerializableFieldInfo other)
 		{
-			return Equals(_fieldInfo, other._fieldInfo);
+			return other != null && Equals(_fieldInfo, other._fieldInfo);
 		}
 
 		public override bool Equals(object obj)

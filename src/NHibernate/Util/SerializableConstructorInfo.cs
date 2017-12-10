@@ -7,7 +7,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableConstructorInfo : ISerializable
+	internal sealed class SerializableConstructorInfo : ISerializable, IEquatable<SerializableConstructorInfo>
 	{
 		[NonSerialized]
 		private readonly ConstructorInfo _constructorInfo;
@@ -61,9 +61,9 @@ namespace NHibernate.Util
 
 		public ConstructorInfo Value => _constructorInfo;
 
-		private bool Equals(SerializableConstructorInfo other)
+		public bool Equals(SerializableConstructorInfo other)
 		{
-			return Equals(_constructorInfo, other._constructorInfo);
+			return other != null && Equals(_constructorInfo, other._constructorInfo);
 		}
 
 		public override bool Equals(object obj)

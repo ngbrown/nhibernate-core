@@ -5,7 +5,7 @@ using System.Security;
 namespace NHibernate.Util
 {
 	[Serializable]
-	internal sealed class SerializableSystemType : ISerializable
+	internal sealed class SerializableSystemType : ISerializable, IEquatable<SerializableSystemType>
 	{
 		[NonSerialized]
 		private System.Type _type;
@@ -67,11 +67,12 @@ namespace NHibernate.Util
 			info.AddValue("_typeName", _typeName);
 		}
 
-		private bool Equals(SerializableSystemType other)
+		public bool Equals(SerializableSystemType other)
 		{
-			return _type == null || other._type == null
-				? Equals(_typeName, other._typeName)
-				: Equals(_type, other._type);
+			return other != null &&
+				(_type == null || other._type == null
+					? Equals(_typeName, other._typeName)
+					: Equals(_type, other._type));
 		}
 
 		public override bool Equals(object obj)
