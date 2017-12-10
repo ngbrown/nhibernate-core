@@ -125,7 +125,7 @@ namespace NHibernate.Type
 				{
 					_returnedClass = DetermineAssociatedEntityClass();
 				}
-				return _returnedClass?.GetType();
+				return _returnedClass?.GetSystemType();
 			}
 		}
 

@@ -83,9 +83,9 @@ namespace NHibernate.Transform
 
 			try
 			{
-				result = _resultClass.GetType().IsClass
+				result = _resultClass.GetSystemType().IsClass
 							? _beanConstructor.Invoke(null)
-							: Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_resultClass.GetType(), true);
+							: Cfg.Environment.BytecodeProvider.ObjectsFactory.CreateInstance(_resultClass.GetSystemType(), true);
 
 				for (int i = 0; i < aliases.Length; i++)
 				{

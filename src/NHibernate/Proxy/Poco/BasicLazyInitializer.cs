@@ -71,7 +71,7 @@ namespace NHibernate.Proxy.Poco
 
 		public override System.Type PersistentClass
 		{
-			get { return _persistentClass.GetType(); }
+			get { return _persistentClass.GetSystemType(); }
 		}
 
 		/// <summary>

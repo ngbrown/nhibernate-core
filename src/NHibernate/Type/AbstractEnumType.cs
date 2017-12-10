@@ -30,14 +30,14 @@ namespace NHibernate.Type
 		private readonly object _defaultValue;
 		private readonly SerializableSystemType _enumType;
 
-		public override System.Type ReturnedClass => _enumType?.GetType();
+		public override System.Type ReturnedClass => _enumType?.GetSystemType();
 
 
 		#region IIdentifierType Members
 
 		public object StringToObject(string xml)
 		{
-			return Enum.Parse(_enumType.GetType(), xml);
+			return Enum.Parse(_enumType.GetSystemType(), xml);
 		}
 
 		#endregion
@@ -48,7 +48,7 @@ namespace NHibernate.Type
 			return StringToObject(xml);
 		}
 
-		public override System.Type PrimitiveClass => _enumType?.GetType();
+		public override System.Type PrimitiveClass => _enumType?.GetSystemType();
 
 		public override object DefaultValue => _defaultValue;
 	}

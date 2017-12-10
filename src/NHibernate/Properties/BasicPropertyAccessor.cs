@@ -196,7 +196,7 @@ namespace NHibernate.Properties
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "Exception occurred", false, _clazz.TryGetType(), _propertyName);
+					throw new PropertyAccessException(e, "Exception occurred", false, _clazz.TryGetSystemType(), _propertyName);
 				}
 			}
 
@@ -232,7 +232,7 @@ namespace NHibernate.Properties
 				MethodInfo method = Method;
 				if (method == null)
 				{
-					throw new PropertyNotFoundException(_clazz.TryGetType(), _property.Value.Name, "getter");
+					throw new PropertyNotFoundException(_clazz.TryGetSystemType(), _property.Value.Name, "getter");
 				}
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}
@@ -291,17 +291,17 @@ namespace NHibernate.Properties
 						string msg =
 							String.Format("The type {0} can not be assigned to a property of type {1}", value.GetType(),
 														_property.Value.PropertyType);
-						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetType(), _propertyName);
+						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetSystemType(), _propertyName);
 					}
 					else
 					{
 						throw new PropertyAccessException(ae, "ArgumentException while setting the property value by reflection", true,
-																							_clazz.TryGetType(), _propertyName);
+																							_clazz.TryGetSystemType(), _propertyName);
 					}
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not set a property value by reflection", true, _clazz.TryGetType(), _propertyName);
+					throw new PropertyAccessException(e, "could not set a property value by reflection", true, _clazz.TryGetSystemType(), _propertyName);
 				}
 			}
 
@@ -326,7 +326,7 @@ namespace NHibernate.Properties
 				MethodInfo method = Method;
 				if (method == null)
 				{
-					throw new PropertyNotFoundException(_clazz.TryGetType(), _property.Value.Name, "setter");
+					throw new PropertyNotFoundException(_clazz.TryGetSystemType(), _property.Value.Name, "setter");
 				}
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}

@@ -55,7 +55,7 @@ namespace NHibernate
 
 		public override string Message => base.Message + MessageHelper.InfoString(EntityName, _identifier);
 
-		public System.Type PersistentClass => _clazz?.TryGetType();
+		public System.Type PersistentClass => _clazz?.TryGetSystemType();
 
 		public string EntityName => _clazz != null ? _clazz.FullName : _entityName;
 

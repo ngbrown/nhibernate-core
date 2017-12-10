@@ -46,7 +46,7 @@ namespace NHibernate
 		/// <summary>
 		/// Gets the <see cref="System.Type"/> that NHibernate was trying find the Property or Field in.
 		/// </summary>
-		public System.Type PersistentType => _persistentType?.TryGetType();
+		public System.Type PersistentType => _persistentType?.TryGetSystemType();
 
 		/// <summary>
 		/// Gets a message that describes the current <see cref="PropertyAccessException"/>.

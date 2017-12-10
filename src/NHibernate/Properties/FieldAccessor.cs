@@ -189,7 +189,7 @@ namespace NHibernate.Properties
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not get a field value by reflection", false, _clazz.GetType(), _name);
+					throw new PropertyAccessException(e, "could not get a field value by reflection", false, _clazz.GetSystemType(), _name);
 				}
 			}
 
@@ -275,17 +275,17 @@ namespace NHibernate.Properties
 						string msg =
 							String.Format("The type {0} can not be assigned to a field of type {1}", value.GetType(),
 														_field.Value.FieldType);
-						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetType(), _name);
+						throw new PropertyAccessException(ae, msg, true, _clazz.TryGetSystemType(), _name);
 					}
 					else
 					{
-						throw new PropertyAccessException(ae, "ArgumentException while setting the field value by reflection", true, _clazz.TryGetType(),
+						throw new PropertyAccessException(ae, "ArgumentException while setting the field value by reflection", true, _clazz.TryGetSystemType(),
 																							_name);
 					}
 				}
 				catch (Exception e)
 				{
-					throw new PropertyAccessException(e, "could not set a field value by reflection", true, _clazz.TryGetType(), _name);
+					throw new PropertyAccessException(e, "could not set a field value by reflection", true, _clazz.TryGetSystemType(), _name);
 				}
 			}
 

@@ -38,7 +38,7 @@ namespace NHibernate
 		/// <summary>
 		/// Gets the <see cref="System.Type"/> that NHibernate was trying to instantiate.
 		/// </summary>
-		public System.Type PersistentType => _type?.TryGetType();
+		public System.Type PersistentType => _type?.TryGetSystemType();
 
 		/// <summary>
 		/// Gets a message that describes the current <see cref="InstantiationException"/>.

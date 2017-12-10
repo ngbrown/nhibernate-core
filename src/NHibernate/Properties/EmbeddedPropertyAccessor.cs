@@ -42,7 +42,7 @@ namespace NHibernate.Properties
 				return target;
 			}
 
-			public System.Type ReturnType => _clazz?.GetType();
+			public System.Type ReturnType => _clazz?.GetSystemType();
 
 			public string PropertyName => null;
 

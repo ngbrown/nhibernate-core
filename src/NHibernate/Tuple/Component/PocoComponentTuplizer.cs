@@ -49,8 +49,8 @@ namespace NHibernate.Tuple.Component
 			}
 			else
 			{
-				_parentSetter = parentProperty.GetSetter(_componentClass.GetType());
-				_parentGetter = parentProperty.GetGetter(_componentClass.GetType());
+				_parentSetter = parentProperty.GetSetter(_componentClass.GetSystemType());
+				_parentGetter = parentProperty.GetGetter(_componentClass.GetSystemType());
 			}
 
 			SetReflectionOptimizer();
@@ -61,7 +61,7 @@ namespace NHibernate.Tuple.Component
 			ClearOptimizerWhenUsingCustomAccessors();
 		}
 
-		public override System.Type MappedClass => _componentClass?.GetType();
+		public override System.Type MappedClass => _componentClass?.GetSystemType();
 
 		public override object[] GetPropertyValues(object component)
 		{
@@ -140,7 +140,7 @@ namespace NHibernate.Tuple.Component
 		{
 			if (Cfg.Environment.UseReflectionOptimizer)
 			{
-				_optimizer = Cfg.Environment.BytecodeProvider.GetReflectionOptimizer(_componentClass.GetType(), getters, setters);
+				_optimizer = Cfg.Environment.BytecodeProvider.GetReflectionOptimizer(_componentClass.GetSystemType(), getters, setters);
 			}
 		}
 

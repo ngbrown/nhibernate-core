@@ -41,7 +41,7 @@ namespace NHibernate.Type
 		/// <summary>
 		/// The <see cref="System.Array"/> for the element.
 		/// </summary>
-		public override System.Type ReturnedClass => _arrayClass?.GetType();
+		public override System.Type ReturnedClass => _arrayClass?.GetSystemType();
 
 		public override IPersistentCollection Instantiate(ISessionImplementor session, ICollectionPersister persister, object key)
 		{
@@ -86,7 +86,7 @@ namespace NHibernate.Type
 
 		public override object InstantiateResult(object original)
 		{
-			return Array.CreateInstance(_elementClass.GetType(), ((Array) original).Length);
+			return Array.CreateInstance(_elementClass.GetSystemType(), ((Array) original).Length);
 		}
 
 		public override object Instantiate(int anticipatedSize)

@@ -71,7 +71,7 @@ namespace NHibernate.Type
 			}
 		}
 
-		public override System.Type ReturnedClass => _serializableClass?.GetType();
+		public override System.Type ReturnedClass => _serializableClass?.GetSystemType();
 
 		public override bool IsEqual(object x, object y)
 		{
