@@ -2,3 +2,6 @@ nuget.exe
 NUnit.*
 vswhere.*
 CSharpAsyncGenerator.CommandLine.*
+packages.config.md5sum
+Cake.*/
+Appveyor.TestLogger/

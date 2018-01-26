@@ -1,0 +1,137 @@
+# CircleCI 2.0 configuration file
+---
+# Common primary image
+ref-base-image: &ref-base-image
+  image: ngbrown/nhibernate-build-dotnet-sdk:latest
+  environment:
+  - DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  - CAKE_VERSION: 0.21.1
+
+# Download and cache dependencies
+ref-restore-cache: &ref-restore-cache
+  restore_cache:
+    keys:
+      - cake-{{ .Environment.CAKE_VERSION }}
+
+ref-save-cache: &ref-save-cache
+  save_cache:
+    key: cake-{{ .Environment.CAKE_VERSION }}
+    paths:
+      - ~/project/tools
+
+version: 2
+jobs:
+  test-mssql:
+    docker:
+      - *ref-base-image
+
+      - image: microsoft/mssql-server-linux:2017-latest
+        environment:
+          - ACCEPT_EULA: Y
+          - SA_PASSWORD: Password12!
+
+    working_directory: ~/project
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - *ref-restore-cache
+      - run: ./build.sh --target Restore
+      - *ref-save-cache
+
+      # compile and run tests.
+      - run:
+          name: Test on Microsoft SQL Server 2017 for Linux
+          environment:
+            - NHIBERNATE_DATABASE_TEMPLATE: MSSQL.cfg.xml
+            - NHIBERNATE_CONNECTION_STRING: Server=(local);Database=master;User ID=sa;Password=Password12!
+            - NHIBERNATE_DIALECT: NHibernate.Dialect.MsSql2012Dialect
+            - DOTNET_FRAMEWORK: netcoreapp2.0
+            - TARGET_PLATFORM: x64
+          command: ./build.sh --target CircleCI --configuration Debug
+
+      - store_test_results:
+          path: ~/test-reports
+      - store_artifacts:
+          path: ~/test-reports
+
+  test-postgresql:
+    docker:
+      - *ref-base-image
+
+      - image: postgres:9.6-alpine
+        environment:
+          - POSTGRES_PASSWORD: Password12!
+        command: ["postgres", "-c", "max_prepared_transactions=100"]
+
+    working_directory: ~/project
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - *ref-restore-cache
+      - run: ./build.sh --target Restore
+      - *ref-save-cache
+
+      # compile and run tests.
+      - run:
+          name: Test on PostgreSQL 9.6 for Linux
+          environment:
+            - NHIBERNATE_DATABASE_TEMPLATE: PostgreSQL.cfg.xml
+            - NHIBERNATE_CONNECTION_STRING: Server=localhost;Port=5432;Database=nhibernate;User ID=postgres;Password=Password12!;Enlist=true;
+            - NHIBERNATE_DIALECT: NHibernate.Dialect.PostgreSQL83Dialect
+            - DOTNET_FRAMEWORK: netcoreapp2.0
+            - TARGET_PLATFORM: x64
+          command: ./build.sh --target CircleCI --configuration Debug
+
+      - store_test_results:
+          path: ~/test-reports
+      - store_artifacts:
+          path: ~/test-reports
+
+  test-firebird:
+    docker:
+      - *ref-base-image
+
+      - image: ngbrown/nhibernate-build-firebird
+        environment:
+          - ISC_PASSWORD: Password12!
+            FIREBIRD_USER: nhibernate
+            FIREBIRD_PASSWORD: Password12!
+            FIREBIRD_DATABASE: nhibernate
+
+    working_directory: ~/project
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - *ref-restore-cache
+      - run: ./build.sh --target Restore
+      - *ref-save-cache
+
+      # compile and run tests.
+      - run:
+          name: Test on Firebird 3.0 for Linux
+          environment:
+            - NHIBERNATE_DATABASE_TEMPLATE: FireBird.cfg.xml
+            - NHIBERNATE_CONNECTION_STRING: DataSource=localhost;Database=nhibernate;User ID=SYSDBA;Password=Password12!;MaxPoolSize=200;
+            - NHIBERNATE_DIALECT: NHibernate.Dialect.FirebirdDialect
+            - DOTNET_FRAMEWORK: netcoreapp2.0
+            - TARGET_PLATFORM: x64
+          command: ./build.sh --target CircleCI --configuration Debug
+
+      - store_test_results:
+          path: ~/test-reports
+      - store_artifacts:
+          path: ~/test-reports
+
+workflows:
+    version: 2
+    build:
+      jobs:
+        - test-mssql
+        - test-postgresql
+        - test-firebird
