@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Linq.Expressions;
 using NHibernate.Linq.Visitors;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -41,6 +42,31 @@ namespace NHibernate.Linq.GroupBy
 
 				var visitor1 = new PagingRewriterSelectClauseVisitor(queryModel.MainFromClause);
 				queryModel.SelectClause.TransformExpressions(visitor1.Swap);
+			}
+			else if (queryModel.ResultOperators.Count == 1 && queryModel.ResultOperators[0] is AnyResultOperator &&
+			         queryModel.BodyClauses.Count == 1 && queryModel.BodyClauses[0] is WhereClause whereClause &&
+			         whereClause.Predicate is BinaryExpression whereClausePredicate &&
+			         new[] {whereClausePredicate.Left, whereClausePredicate.Right}.Count(x => x.NodeType == ExpressionType.MemberAccess) == 1)
+			{
+				var joinOnBodyClause = whereClausePredicate.Right.NodeType == ExpressionType.MemberAccess
+					? whereClausePredicate.Right
+					: whereClausePredicate.Left;
+				var cro = new ContainsResultOperator(joinOnBodyClause);
+
+				queryModel.BodyClauses.Clear();
+				foreach (var orderByClause in subQueryModel.BodyClauses)
+				{
+					queryModel.BodyClauses.Add(orderByClause);
+				}
+
+				queryModel.ResultOperators.Clear();
+				foreach (var resultOperator in subQueryModel.ResultOperators)
+				{
+					queryModel.ResultOperators.Add(resultOperator);
+				}
+
+				queryModel.ResultOperators.Add(cro);
+				queryModel.ResultTypeOverride = typeof(bool);
 			}
 			else
 			{

@@ -75,5 +75,27 @@ namespace NHibernate.Test.Linq.ByMethod
 				}
 			);
 		}
+
+		[Test(Description = "GH2479")]
+		public void NestedAnyWithPaging()
+		{
+			using (var sqlSpy = new SqlLogSpy())
+			{
+				var ordersQuery = db.Orders
+				                    .Where(x => x.Employee.EmployeeId > 5)
+				                    .OrderBy(x => x.OrderId)
+				                    .Take(2);
+
+				var orderLines = db.OrderLines
+				                   .Where(x => ordersQuery.Any(o => o == x.Order))
+				                   .OrderBy(x => x.Id)
+				                   .ToList();
+
+				var sql = sqlSpy.GetWholeLog();
+
+				Assert.That(orderLines.Count, Is.EqualTo(6), nameof(orderLines));
+				Assert.That(GetTotalOccurrences(sql, "select"), Is.EqualTo(2));
+			}
+		}
 	}
 }
